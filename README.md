@@ -34,17 +34,6 @@ src/
 ├── String_basic.java # Tính chất bất biến (immutable) của String
 └── String_pool.java # String pool trong Java
 
-## 📌 Cách chạy
-- Mỗi class có `public static void main(String[] args)` riêng để chạy độc lập.  
-- Chạy trực tiếp từ IDE (IntelliJ/Eclipse/VS Code).  
-- Ví dụ:  
-  ```bash
-  # Compile
-  javac src/demo/datatypes/Primitive_object.java
-
-  # Run
-  java demo.datatypes.Primitive_object
-  
 📚 Nội dung
 
 1. Data types
