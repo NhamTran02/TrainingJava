@@ -256,6 +256,85 @@ DELIMITER ;
 
 call GetStudentByClass(1);
 
+-- Kiểm tra xem có index chưa
+EXPLAIN SELECT * FROM Students WHERE name = 'Yên';
+
+-- Tạo Non-clustered index
+CREATE INDEX idx_name ON Students(name);
+
+-- Demo về Composite Index
+CREATE INDEX idx_class_age ON Students(class_id, age);
+
+EXPLAIN SELECT * FROM Students WHERE class_id = 5 AND age = 20;
+-- Index không được dùng (vì vi phạm nguyên tắc left-most prefix).
+EXPLAIN SELECT * FROM Students WHERE age = 20;
+
+-- Partition bảng Students theo độ tuổi (RANGE)
+CREATE TABLE Students_Partitioned (
+    student_id INT NOT NULL,
+    name VARCHAR(50) NOT NULL,
+    age INT NOT NULL,
+    class_id INT
+)
+PARTITION BY RANGE (age) (
+    PARTITION p17 VALUES LESS THAN (18),
+    PARTITION p18 VALUES LESS THAN (19),
+    PARTITION p19 VALUES LESS THAN (20),
+    PARTITION pmax VALUES LESS THAN MAXVALUE
+);
+-- p17 giữ tất cả tuổi ≤ 17
+-- p18 chỉ giữ đúng tuổi = 18
+-- p19 chỉ giữ đúng tuổi = 19
+-- pmax giữ tất cả từ 20 trở lên
+-- Xóa dữ liệu student có tuổi = 18 trong partition
+ALTER TABLE Students_Partitioned DROP PARTITION p19;
+-- store procedure
+-- procedure Thêm một học sinh mới
+DELIMITER //
+CREATE PROCEDURE AddStudent(
+    IN p_id INT,
+    IN p_name VARCHAR(50),
+    IN p_age INT,
+    IN p_class_id INT
+)
+BEGIN
+    INSERT INTO Students (student_id, name, age, class_id)
+    VALUES (p_id, p_name, p_age, p_class_id);
+END;
+//
+DELIMITER ;
+
+CALL AddStudent(7, 'Linh', 18, 3);
+-- store procedure Cập nhật giáo viên phụ trách lớp
+DELIMITER //
+CREATE PROCEDURE UpdateTeacherForClass(
+    IN p_class_id INT,
+    IN p_teacher_id INT
+)
+BEGIN
+    UPDATE Classes
+    SET teacher_id = p_teacher_id
+    WHERE class_id = p_class_id;
+END;
+//
+DELIMITER ;
+
+CALL UpdateTeacherForClass(4, 1);
+-- store procedure Xóa học sinh theo tuổi
+DELIMITER //
+CREATE PROCEDURE DeleteStudentsByAge(
+    IN p_age INT
+)
+BEGIN
+    DELETE FROM Students WHERE age = p_age;
+END;
+//
+DELIMITER ;
+
+CALL DeleteStudentsByAge(18);
+
+
+
 
 
 

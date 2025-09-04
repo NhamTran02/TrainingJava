@@ -41,10 +41,10 @@ abstract class ab1{
 //    }
 //}
 
-
 public class Test {
     public static void main(String[] args) {
         C c = new C();
         c.show(3);
     }
 }
+
