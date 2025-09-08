@@ -1,6 +1,7 @@
 package com.example.Shoe_shop.entity;
 
 import com.example.Shoe_shop.entity.base.BaseAudit;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -52,6 +53,7 @@ public class User extends BaseAudit {
 
     @ManyToOne
     @JoinColumn(name = "role_id", nullable = false)
+    @JsonBackReference
     Role role;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -65,5 +67,6 @@ public class User extends BaseAudit {
 
     @OneToMany(mappedBy = "user")
     private List<Wishlist> wishlists;
+
 
 }

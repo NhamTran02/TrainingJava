@@ -19,3 +19,9 @@ server:
   port: 8080
   servlet:
     context-path: /api
+
+jwt:
+  accessKey: c2VjcmV0QGtleS5hcGlfaGFzX2JlZW5fZGVzaWduZWRfYnlfVGF5TFE=
+  refreshKey: P+IPQo0w49hNbFHj9ZxKsXGwfyJNcGGcqEa/dl8dtQo=
+  expiryMinute: 1
+  expiryDay: 14
