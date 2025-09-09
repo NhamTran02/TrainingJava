@@ -1,8 +1,8 @@
 package com.example.Shoe_shop.controller;
 
-import com.example.Shoe_shop.dto.ApiResponse;
-import com.example.Shoe_shop.dto.UserCreateDTO;
-import com.example.Shoe_shop.entity.User;
+import com.example.Shoe_shop.dto.response.ApiResponse;
+import com.example.Shoe_shop.dto.request.UserUpdateDTO;
+import com.example.Shoe_shop.dto.response.UserResponse;
 import com.example.Shoe_shop.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -17,21 +17,29 @@ import java.util.List;
 public class UserController {
     private final UserService userService;
 
-    @PostMapping("")
-    public ApiResponse<User> addUser(@RequestBody @Valid UserCreateDTO dto){
-        ApiResponse<User> response = new ApiResponse<>();
-        response.setResult(userService.createUser(dto));
+    @GetMapping("/{id}")
+    public ApiResponse<UserResponse> getUser (@PathVariable Long id){
+        ApiResponse<UserResponse> response = new ApiResponse<>();
+        response.setResult(userService.getUserById(id));
         return response;
     }
 
-    @GetMapping("/{id}")
-    public User getUser (@PathVariable Long id){
-        return userService.getUserById(id);
+    @GetMapping("")
+    public ResponseEntity<List<UserResponse>> getAllUsers(){
+        List<UserResponse> users = userService.getAllUsers();
+        return ResponseEntity.ok(users);
     }
 
-    @GetMapping("")
-    public ResponseEntity<List<User>> getAllUsers(){
-        List<User> users = userService.getAllUsers();
-        return ResponseEntity.ok(users);
+    @PutMapping("/{id}")
+    public ApiResponse<UserResponse> updateUser(@PathVariable Long id, @RequestBody @Valid UserUpdateDTO dto){
+        ApiResponse<UserResponse> response = new ApiResponse<>();
+        response.setResult(userService.updateUser(id, dto));
+        return response;
+    }
+
+    @DeleteMapping("/{id}")
+    public ApiResponse<Void> deleteUser(@PathVariable Long id){
+        userService.softDeleteUser(id);
+        return new  ApiResponse<>(200,"User deleted successfully", null);
     }
 }

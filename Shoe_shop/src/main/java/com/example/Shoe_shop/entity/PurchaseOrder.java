@@ -12,9 +12,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@EqualsAndHashCode(callSuper = true)
 @Entity
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Data

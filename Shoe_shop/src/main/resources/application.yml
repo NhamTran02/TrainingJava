@@ -14,7 +14,11 @@ spring:
       hibernate:
         format_sql: true
         dialect: org.hibernate.dialect.MySQL8Dialect
-
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG
 server:
   port: 8080
   servlet:
@@ -23,5 +27,5 @@ server:
 jwt:
   accessKey: c2VjcmV0QGtleS5hcGlfaGFzX2JlZW5fZGVzaWduZWRfYnlfVGF5TFE=
   refreshKey: P+IPQo0w49hNbFHj9ZxKsXGwfyJNcGGcqEa/dl8dtQo=
-  expiryMinute: 1
+  expiryHour: 1
   expiryDay: 14

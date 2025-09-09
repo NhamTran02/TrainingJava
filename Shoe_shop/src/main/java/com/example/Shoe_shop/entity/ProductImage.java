@@ -6,9 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-@EqualsAndHashCode(callSuper = true)
 @Entity
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Data

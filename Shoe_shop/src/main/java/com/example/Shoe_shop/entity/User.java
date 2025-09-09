@@ -12,39 +12,39 @@ import lombok.experimental.FieldDefaults;
 
 import java.util.List;
 
-@EqualsAndHashCode(callSuper = true)
 @Entity
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
+@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Table(name = "users")
 public class User extends BaseAudit {
 
-    @NotBlank(message = "Username không được để trống")
+    @NotBlank(message = "USER_NAME_INVALID")
     @Size(min = 3, max = 50)
-    @Column(unique = true,nullable = false)
+    @Column(unique = true, nullable = false)
     String username;
 
-    @Email(message = "Email không hợp lệ")
-    @Column(unique = true,nullable = false)
+    @Email(message = "EMAIL_INVALID")
+    @Column(unique = true, nullable = false)
     String email;
 
-    @NotBlank
-    @Size(min = 6, message = "mật khẩu phải có ít nhất 6 kí tự")
-    @Column(nullable = false,name = "password_hash")
+    @NotBlank(message = "PASSWORD_BLANK")
+    @Size(min = 6, message = "PASSWORD_INVALID")
+    @Column(nullable = false, name = "password_hash")
     String passwordHash;
 
-    @Column(nullable = false,name = "full_name")
+    @Column(nullable = false, name = "full_name")
+    @NotBlank(message = "FULL_NAME_INVALID")
     String fullName;
 
-    @NotBlank(message = "Số điện thoại không được bỏ trống")
-    @Pattern(regexp = "^0[0-9]{9}$", message = "Số điện thoại phải 10 số")
-    @Column(nullable = false,name = "phone_number")
+    @NotBlank(message = "PHONE_INVALID")
+    @Pattern(regexp = "^0[0-9]{9}$", message = "PHONE_INVALID")
+    @Column(nullable = false, name = "phone_number")
     String phoneNumber;
 
-    @NotBlank(message = "Địa chỉ không được để trống")
+    @NotBlank(message = "ADDRESS_INVALID")
     @Column(nullable = false)
     String address;
 

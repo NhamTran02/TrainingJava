@@ -12,7 +12,6 @@ import java.math.BigDecimal;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Data

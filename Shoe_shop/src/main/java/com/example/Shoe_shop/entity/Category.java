@@ -14,7 +14,6 @@ import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Data

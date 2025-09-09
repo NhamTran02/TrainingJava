@@ -1,6 +1,6 @@
 package com.example.Shoe_shop.exception;
 
-import com.example.Shoe_shop.dto.ApiResponse;
+import com.example.Shoe_shop.dto.response.ApiResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;

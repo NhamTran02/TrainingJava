@@ -1,36 +1,39 @@
-package com.example.Shoe_shop.dto;
+package com.example.Shoe_shop.dto.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
+import lombok.experimental.FieldDefaults;
 
 @Data
 @Builder
-public class UserCreateDTO {
+@FieldDefaults(level = AccessLevel.PRIVATE)
+public class RegisterRequest {
 
     @NotBlank(message = "USERNAME_INVALID")
     @Size(min = 3, max = 50)
-    private String username;
+    String username;
 
     @Email(message = "EMAIL_INVALID")
-    private String email;
+    String email;
 
-    @NotBlank
+    @NotBlank(message = "PASSWORD_BLANK")
     @Size(min = 6, message = "PASSWORD_INVALID")
-    private String password;
+    String password;
 
     @NotBlank(message = "FULL_NAME_INVALID")
-    private String fullName;
+    String fullName;
 
     @NotBlank(message = "PHONE_INVALID")
     @Pattern(regexp = "^0[0-9]{9}$", message = "PHONE_INVALID")
-    private String phoneNumber;
+    String phoneNumber;
 
     @NotBlank(message = "ADDRESS_INVALID")
-    private String address;
+    String address;
 
-    private Long roleId;
+    Long roleId;
 }

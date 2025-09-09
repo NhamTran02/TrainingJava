@@ -13,7 +13,6 @@ import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
@@ -49,7 +48,6 @@ public class Order extends BaseAudit {
 
     String note;
 
-    @NotBlank(message = "Số điện thoại không được bỏ trống")
     @Pattern(regexp = "^0[0-9]{9}$", message = "Số điện thoại phải 10 số")
     @Column(name = "tracking_number")
     String trackingNumber;

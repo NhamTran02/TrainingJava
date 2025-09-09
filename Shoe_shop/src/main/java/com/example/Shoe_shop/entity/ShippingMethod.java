@@ -8,9 +8,7 @@ import lombok.*;
 import java.math.BigDecimal;
 import java.util.List;
 
-@EqualsAndHashCode(callSuper = true)
 @Entity
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
