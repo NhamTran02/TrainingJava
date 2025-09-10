@@ -17,11 +17,12 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
+@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Table(name = "categories")
 public class Category extends BaseId {
 
-    @NotBlank(message = "Danh mục không được để trống")
+    @NotBlank(message = "CATEGORY_NAME_INVALID")
     @Column(nullable = false)
     String name;
 

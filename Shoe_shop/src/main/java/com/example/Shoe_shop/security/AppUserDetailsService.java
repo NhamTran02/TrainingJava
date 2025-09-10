@@ -2,6 +2,7 @@ package com.example.Shoe_shop.service.impl;
 
 import com.example.Shoe_shop.entity.User;
 import com.example.Shoe_shop.repository.UserRepository;
+import com.example.Shoe_shop.security.AppUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -17,14 +18,6 @@ public class AppUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User u = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        return org.springframework.security.core.userdetails.User.builder()
-                .username(u.getUsername())
-                .password(u.getPasswordHash())
-                .authorities(u.getRole().getRoleName().toString())
-                .accountExpired(false)
-                .accountLocked(false)
-                .credentialsExpired(false)
-                .disabled(false)
-                .build();
+        return new AppUserDetails(u);
     }
 }
