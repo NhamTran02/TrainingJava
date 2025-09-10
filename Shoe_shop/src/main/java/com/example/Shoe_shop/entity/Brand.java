@@ -18,7 +18,7 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Table(name = "brands")
 public class Brand extends BaseId {
-    @NotBlank(message = "Tên brand không được để trống")
+    @NotBlank(message = "BRAND_NAME_INVALID")
     @Column(nullable = false)
     String name;
 
