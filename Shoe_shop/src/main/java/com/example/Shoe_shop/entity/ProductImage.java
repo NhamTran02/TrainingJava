@@ -14,7 +14,7 @@ import lombok.experimental.FieldDefaults;
 @Table(name = "product_images")
 public class ProductImage extends BaseAudit {
 
-    @NotBlank(message = "URL ảnh không được để trống")
+    @NotBlank(message = "PRODUCT_ID_INVALID")
     @Column(nullable = false,name = "image_url")
     String url;
 

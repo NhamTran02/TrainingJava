@@ -19,26 +19,24 @@ import java.util.List;
 )
 public class ProductVariant extends BaseId {
 
-    @NotBlank(message = "Kích cỡ không được để trống")
-    @Size(max = 10, message = "Kích cỡ tối đa 10 ký tự")
+    @NotBlank(message = "SIZE_INVALID")
     @Column(nullable = false)
     String size;
 
-    @NotBlank(message = "Màu sắc không được để trống")
-    @Size(max = 50, message = "Màu sắc tối đa 50 ký tự")
+    @NotBlank(message = "COLOR_INVALID")
     @Column(nullable = false)
     String color;
 
-    @NotNull(message = "Giá gốc không được để trống")
-    @DecimalMin(value = "0.0", inclusive = false, message = "Giá gốc phải lớn hơn 0")
+    @NotNull(message = "REGULAR_PRICE_INVALID")
+    @DecimalMin(value = "0.0", inclusive = false, message = "REGULAR_PRICE_GREATER_THAN_0")
     @Column(nullable = false,name = "regular_price")
     BigDecimal regularPrice;
 
     @Column(name = "sale_price")
     BigDecimal salePrice;
 
-    @NotNull(message = "Số lượng tồn kho không được để trống")
-    @Min(value = 0, message = "Số lượng tồn kho không được âm")
+    @NotNull(message = "STOCK_INVALID")
+    @Min(value = 0, message = "STOCK_QUANTITY_GREATER_THAN_0")
     @Column(nullable = false,name = "stock_quantity")
     Integer stockQuantity = 0;
 

@@ -17,7 +17,7 @@ import java.util.List;
 @Table(name = "products")
 public class Product extends BaseAudit {
 
-    @NotBlank(message = "Tên sản phẩm không được bỏ trống")
+    @NotBlank(message = "PRODUCT_NAME_INVALID")
     @Column(nullable = false)
     String name;
 
