@@ -1,6 +1,6 @@
 package com.example.Shoe_shop.config;
 
-import com.example.Shoe_shop.service.impl.AppUserDetailsService;
+import com.example.Shoe_shop.security.AppUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,7 +31,7 @@ public class SecurityConfig {
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/auth/**","/category/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/user/**").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.PUT,"/user/**").hasAnyAuthority("ADMIN","USER")
                         .requestMatchers(HttpMethod.DELETE,"/user/**").hasAnyAuthority("ADMIN")

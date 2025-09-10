@@ -1,3 +1,10 @@
+-- - 1–N: roles → users, categories → products, brands → products, products → variants/images/reviews.
+-- - N–N (thông qua bảng trung gian):
+-- products ↔ users (wishlists),
+-- products ↔ users (reviews),
+-- products ↔ orders (order_details),
+-- products ↔ purchase_orders (purchase_order_items).
+
 CREATE DATABASE Shoe_Ecommerce;
 USE Shoe_Ecommerce;
 
@@ -14,11 +21,6 @@ CREATE TABLE categories (
 CREATE TABLE brands (
     id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(100) NOT NULL
-);
-
-CREATE TABLE payment_methods (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    method_name VARCHAR(100) NOT NULL
 );
 
 CREATE TABLE shipping_methods (
@@ -128,14 +130,13 @@ CREATE TABLE orders (
     total_amount DECIMAL(12,2) NOT NULL,
     total_cost DECIMAL(12,2) NOT NULL,
     status ENUM('pending','processing','shipped','delivered','cancelled') DEFAULT 'pending',
-    payment_method_id INT,
+    payment_method VARCHAR(50) NOT NULL,
     shipping_method_id INT,
     shipping_address TEXT,
     note TEXT,
     tracking_number VARCHAR(100),
     shipping_fee DECIMAL(10,2) DEFAULT 0,
     FOREIGN KEY (user_id) REFERENCES users(id),
-    FOREIGN KEY (payment_method_id) REFERENCES payment_methods(id),
     FOREIGN KEY (shipping_method_id) REFERENCES shipping_methods(id)
 );
 
@@ -165,3 +166,40 @@ CREATE TABLE reviews (
     FOREIGN KEY (product_id) REFERENCES products(id),
     FOREIGN KEY (order_id) REFERENCES orders(id)
 );
+
+CREATE TABLE tokens (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(255) NOT NULL UNIQUE,
+    access_token TEXT,
+    refresh_token TEXT,
+    blacklisted BOOLEAN DEFAULT FALSE
+);
+
+SHOW INDEX FROM users;
+
+CREATE INDEX idx_users_name ON users(username);
+CREATE INDEX idx_users_phone ON users(phone_number);
+CREATE INDEX idx_products_category ON products(category_id);
+CREATE INDEX idx_products_brand ON products(brand_id);
+CREATE INDEX idx_variants_product ON product_variants(product_id);
+CREATE INDEX idx_images_product ON product_images(product_id);
+CREATE INDEX idx_poi_order ON purchase_order_items(purchase_order_id);
+CREATE INDEX idx_poi_variant ON purchase_order_items(variant_id);
+CREATE INDEX idx_cart_items_cart ON cart_items(cart_id);
+CREATE INDEX idx_cart_items_variant ON cart_items(variant_id);
+CREATE INDEX idx_orders_user ON orders(user_id);
+CREATE INDEX idx_orders_status ON orders(status);
+CREATE INDEX idx_orders_shipping ON orders(shipping_method_id);
+CREATE INDEX idx_reviews_user ON reviews(user_id);
+CREATE INDEX idx_reviews_product ON reviews(product_id);
+CREATE INDEX idx_reviews_order ON reviews(order_id);
+CREATE INDEX idx_tokens_refresh ON tokens(refresh_token(100));
+
+
+
+
+
+
+
+
+

@@ -1,7 +1,7 @@
 package com.example.Shoe_shop.config;
 
 import com.example.Shoe_shop.service.JwtService;
-import com.example.Shoe_shop.service.impl.AppUserDetailsService;
+import com.example.Shoe_shop.security.AppUserDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

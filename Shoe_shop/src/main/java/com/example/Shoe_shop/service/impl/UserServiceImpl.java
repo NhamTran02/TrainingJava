@@ -11,6 +11,7 @@ import com.example.Shoe_shop.mapper.UserMapper;
 import com.example.Shoe_shop.repository.RoleRepository;
 import com.example.Shoe_shop.repository.UserRepository;
 import com.example.Shoe_shop.service.UserService;
+import com.example.Shoe_shop.utils.CheckRole;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -44,7 +45,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserResponse> getAllUsers() {
 
-        List<User> users = isAdmin()
+        List<User> users = CheckRole.isAdmin()
                 ? userRepository.findAll()
                 : userRepository.findAllByDeletedFalse();
         return users.stream()
@@ -57,8 +58,7 @@ public class UserServiceImpl implements UserService {
         User user= userRepository.findById(id)
                 .orElseThrow(()-> new RuntimeException("User not found"));
 
-
-        if (!isAdmin() && Boolean.TRUE.equals(user.getDeleted())){
+        if (!CheckRole.isAdmin() && Boolean.TRUE.equals(user.getDeleted())){
             throw new AppException(ErrorCode.USER_NOT_FOUND);
         }
         return userMapper.toUserResponse(user);
@@ -78,7 +78,7 @@ public class UserServiceImpl implements UserService {
 
         userMapper.updateUserFromDtoExcludingSensitive(userUpdateDTO, user);
 
-        if(isAdmin()){
+        if(CheckRole.isAdmin()){
             if(userUpdateDTO.getPassword()!=null){
                 user.setPasswordHash(passwordEncoder.encode(userUpdateDTO.getPassword()));
             }
@@ -101,9 +101,4 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
     }
 
-    private boolean isAdmin() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        return  auth.getAuthorities().stream()
-                .anyMatch(a -> a.getAuthority().equals("ADMIN"));
-    }
 }

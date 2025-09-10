@@ -69,6 +69,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public AuthenticationResponse login(AuthenticationRequest req) {
+
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(req.getUsername(), req.getPassword())
         );
@@ -87,8 +88,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         token.setRefreshToken(refresh);
         token.setBlacklisted(false);
         tokenService.save(token);
-
-
 
         return AuthenticationResponse.builder()
                 .accessToken(access)

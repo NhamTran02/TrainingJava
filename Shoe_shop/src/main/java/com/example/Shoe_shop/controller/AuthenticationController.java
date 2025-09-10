@@ -5,10 +5,9 @@ import com.example.Shoe_shop.dto.request.RegisterRequest;
 import com.example.Shoe_shop.dto.response.ApiResponse;
 import com.example.Shoe_shop.dto.response.AuthenticationResponse;
 import com.example.Shoe_shop.service.AuthenticationService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,9 +31,10 @@ public class AuthenticationController {
 
     @PostMapping("/login")
     public ApiResponse<AuthenticationResponse> login(@Valid @RequestBody AuthenticationRequest req) {
+        AuthenticationResponse res = authService.login(req);
         return ApiResponse.<AuthenticationResponse>builder()
                 .message("Login successfully!")
-                .result(authService.login(req))
+                .result(res)
                 .build();
     }
 
@@ -48,8 +48,12 @@ public class AuthenticationController {
     }
 
     @PostMapping("/logout")
-    public ApiResponse<Void> logout(@RequestBody Map<String, String> body) {
-        authService.logout(body.get("refreshToken"));
+    public ApiResponse<Void> logout(HttpServletRequest request) {
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String token = authHeader.substring(7);
+            authService.logout(token);
+        }
         return ApiResponse.<Void>builder()
                 .message("Logout successfully!")
                 .build();

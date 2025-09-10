@@ -1,8 +1,7 @@
-package com.example.Shoe_shop.service.impl;
+package com.example.Shoe_shop.security;
 
 import com.example.Shoe_shop.entity.User;
 import com.example.Shoe_shop.repository.UserRepository;
-import com.example.Shoe_shop.security.AppUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
