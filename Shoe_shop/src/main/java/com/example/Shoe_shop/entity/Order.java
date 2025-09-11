@@ -1,8 +1,8 @@
 package com.example.Shoe_shop.entity;
 
 import com.example.Shoe_shop.entity.base.BaseAudit;
-import com.example.Shoe_shop.utils.OrderStatus;
-import com.example.Shoe_shop.utils.PaymentMethod;
+import com.example.Shoe_shop.utils.enums.OrderStatus;
+import com.example.Shoe_shop.utils.enums.PaymentMethod;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;

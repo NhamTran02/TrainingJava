@@ -1,7 +1,7 @@
 package com.example.Shoe_shop.entity;
 
 import com.example.Shoe_shop.entity.base.BaseId;
-import com.example.Shoe_shop.utils.ShippingType;
+import com.example.Shoe_shop.utils.enums.ShippingType;
 import jakarta.persistence.*;
 import lombok.*;
 

@@ -5,7 +5,6 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
 import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)

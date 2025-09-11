@@ -13,4 +13,5 @@ public class ProductSearchRequest {
     private BigDecimal maxPrice;
     private String size;
     private String color;
+
 }

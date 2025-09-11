@@ -4,6 +4,7 @@ import com.example.Shoe_shop.dto.request.BrandRequest;
 import com.example.Shoe_shop.dto.response.ApiResponse;
 import com.example.Shoe_shop.dto.response.BrandResponse;
 import com.example.Shoe_shop.service.BrandService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,7 +17,7 @@ public class BrandController {
     private final BrandService brandService;
 
     @PostMapping("")
-    public ApiResponse<BrandResponse> createBrand(@RequestBody BrandRequest request) {
+    public ApiResponse<BrandResponse> createBrand(@RequestBody @Valid BrandRequest request) {
         BrandResponse response = brandService.createBrand(request);
         return ApiResponse.<BrandResponse>builder()
                 .message("Brand created successfully")
@@ -41,7 +42,7 @@ public class BrandController {
     }
 
     @PutMapping("/{id}")
-    public ApiResponse<BrandResponse> updateBrand(@PathVariable Long id, @RequestBody BrandRequest request) {
+    public ApiResponse<BrandResponse> updateBrand(@PathVariable Long id, @RequestBody @Valid BrandRequest request) {
         BrandResponse response = brandService.updateBrand(id, request);
         return ApiResponse.<BrandResponse>builder()
                 .message("Brand updated successfully")

@@ -12,6 +12,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -43,6 +44,7 @@ public class BrandServiceImpl implements BrandService {
     }
 
     @Override
+    @Transactional
     public BrandResponse updateBrand(Long id, BrandRequest request) {
         Brand brand = brandRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.BRAND_NOT_FOUND));
@@ -52,6 +54,7 @@ public class BrandServiceImpl implements BrandService {
     }
 
     @Override
+    @Transactional
     public void deleteBrand(Long id) {
         Brand brand = brandRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.BRAND_NOT_FOUND));

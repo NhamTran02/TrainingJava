@@ -38,6 +38,8 @@ public enum ErrorCode {
     PRODUCT_ID_INVALID(1029,"Product id blank"),
     IMAGE_URL_INVALID(1030,"Image url blank"),
     PRODUCT_NOT_FOUND(1031,"Product not found"),
+    PRODUCT_ALREADY_DELETED(1032,"Product already deleted"),
+    USER_ALREADY_DELETED(1033,"User already deleted"),
     ;
 
     private final int code;

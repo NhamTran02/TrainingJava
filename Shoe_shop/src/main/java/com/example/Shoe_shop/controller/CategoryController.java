@@ -4,6 +4,7 @@ import com.example.Shoe_shop.dto.request.CategoryRequest;
 import com.example.Shoe_shop.dto.response.ApiResponse;
 import com.example.Shoe_shop.dto.response.CategoryResponse;
 import com.example.Shoe_shop.service.CategoryService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,7 +17,7 @@ public class CategoryController {
     private final CategoryService categoryService;
 
     @PostMapping("")
-    public ApiResponse<CategoryResponse> createCategory(@RequestBody CategoryRequest categoryRequest) {
+    public ApiResponse<CategoryResponse> createCategory(@RequestBody @Valid CategoryRequest categoryRequest) {
         categoryService.createCategory(categoryRequest);
         return ApiResponse.<CategoryResponse>builder()
                 .message("Category created successfully")
@@ -40,7 +41,7 @@ public class CategoryController {
     }
 
     @PutMapping("/{id}")
-    public ApiResponse<CategoryResponse> updateCategory(@PathVariable Long id,@RequestBody CategoryRequest categoryRequest) {
+    public ApiResponse<CategoryResponse> updateCategory(@PathVariable Long id,@RequestBody @Valid CategoryRequest categoryRequest) {
         CategoryResponse categoryResponse = categoryService.updateCategory(id, categoryRequest);
         return ApiResponse.<CategoryResponse>builder()
                 .result(categoryResponse)

@@ -1,4 +1,4 @@
-package com.example.Shoe_shop.utils;
+package com.example.Shoe_shop.utils.enums;
 
 public enum TokenType {
     ACCESS_TOKEN,

@@ -12,6 +12,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -23,6 +24,7 @@ public class CategoryServiceImpl implements CategoryService {
     CategoryMapper categoryMapper;
 
     @Override
+    @Transactional
     public CategoryResponse createCategory(CategoryRequest categoryRequest) {
         Category category = categoryMapper.toEntity(categoryRequest);
         categoryRepository.save(category);
@@ -43,6 +45,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional
     public CategoryResponse updateCategory(Long id,CategoryRequest categoryRequest) {
         Category category=categoryRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_FOUND));
@@ -52,6 +55,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional
     public void deleteCategory(Long id ) {
         Category category=categoryRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_FOUND));

@@ -1,7 +1,7 @@
 package com.example.Shoe_shop.entity;
 
 import com.example.Shoe_shop.entity.base.BaseId;
-import com.example.Shoe_shop.utils.RoleName;
+import com.example.Shoe_shop.utils.enums.RoleName;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
