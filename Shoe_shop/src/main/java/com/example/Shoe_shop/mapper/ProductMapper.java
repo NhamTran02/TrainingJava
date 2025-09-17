@@ -9,7 +9,7 @@ import org.mapstruct.MappingTarget;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses =  {ProductVariantMapper.class, ProductImageMapper.class})
 public interface ProductMapper {
     @Mapping(target = "deleted", constant = "false")
     Product toEntity(ProductRequest request);
@@ -21,6 +21,7 @@ public interface ProductMapper {
     ProductResponse toResponse(Product product);
 
     void updateEntityFromRequest(ProductRequest request, @MappingTarget Product product);
+
 
     List<ProductResponse> toResponseList(List<Product> products);
 }
