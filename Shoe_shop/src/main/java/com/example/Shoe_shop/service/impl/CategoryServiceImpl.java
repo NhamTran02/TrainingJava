@@ -8,6 +8,7 @@ import com.example.Shoe_shop.exception.ErrorCode;
 import com.example.Shoe_shop.mapper.CategoryMapper;
 import com.example.Shoe_shop.repository.CategoryRepository;
 import com.example.Shoe_shop.service.CategoryService;
+import com.example.Shoe_shop.utils.EntityValidatorUtil;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -22,6 +23,7 @@ import java.util.List;
 public class CategoryServiceImpl implements CategoryService {
     CategoryRepository categoryRepository;
     CategoryMapper categoryMapper;
+    EntityValidatorUtil entityValidatorUtil;
 
     @Override
     @Transactional
@@ -33,8 +35,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryResponse getCategoryById(Long categoryId) {
-        Category category=categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_FOUND));
+        Category category=entityValidatorUtil.requireCategory(categoryId);
         return categoryMapper.toResponse(category);
     }
 
@@ -47,9 +48,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     @Transactional
     public CategoryResponse updateCategory(Long id,CategoryRequest categoryRequest) {
-        Category category=categoryRepository.findById(id)
-                .orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_FOUND));
-        categoryMapper.updateEntityFromRequest(categoryRequest,category);
+        Category category=entityValidatorUtil.requireCategory(id);
         categoryRepository.save(category);
         return categoryMapper.toResponse(category);
     }
@@ -57,8 +56,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     @Transactional
     public void deleteCategory(Long id ) {
-        Category category=categoryRepository.findById(id)
-                .orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_FOUND));
+        Category category=entityValidatorUtil.requireCategory(id);
         if(!category.getProducts().isEmpty()){
             throw new AppException(ErrorCode.CATEGORY_HAS_PRODUCTS);
         }

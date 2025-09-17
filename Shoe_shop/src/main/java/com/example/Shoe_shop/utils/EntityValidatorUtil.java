@@ -20,6 +20,7 @@ public class EntityValidatorUtil {
     ProductRepository productRepo;
     ProductVariantRepository productVariantRepo;
     ShippingMethodRepository shippingRepo;
+    OrderRepository orderRepo;
 
     public User requireUser(Long id) {
         return userRepo.findById(id)
@@ -57,6 +58,10 @@ public class EntityValidatorUtil {
     public ShippingMethod requireShipping(Long id) {
         return shippingRepo.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.SHIPPING_METHOD_REQUIRED));
+    }
+    public Order requireOrder(Long id) {
+        return orderRepo.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.ORDER_ID_REQUIRED));
     }
 
 }

@@ -8,6 +8,7 @@ import com.example.Shoe_shop.exception.ErrorCode;
 import com.example.Shoe_shop.mapper.BrandMapper;
 import com.example.Shoe_shop.repository.BrandRepository;
 import com.example.Shoe_shop.service.BrandService;
+import com.example.Shoe_shop.utils.EntityValidatorUtil;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -22,6 +23,7 @@ import java.util.List;
 public class BrandServiceImpl implements BrandService {
     BrandRepository brandRepository;
     BrandMapper brandMapper;
+    EntityValidatorUtil entityValidatorUtil;
 
     @Override
     public BrandResponse createBrand(BrandRequest request) {
@@ -56,8 +58,7 @@ public class BrandServiceImpl implements BrandService {
     @Override
     @Transactional
     public void deleteBrand(Long id) {
-        Brand brand = brandRepository.findById(id)
-                .orElseThrow(() -> new AppException(ErrorCode.BRAND_NOT_FOUND));
+        Brand brand = entityValidatorUtil.requireBrand(id);
 
         if (!brand.getProducts().isEmpty()) {
             throw new AppException(ErrorCode.BRAND_HAS_PRODUCTS);

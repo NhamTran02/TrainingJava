@@ -9,6 +9,7 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
+@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Table(name = "wishlists",
         uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "product_id"})})

@@ -30,8 +30,18 @@ public class PurchaseOrderItem extends BaseId {
     @Column(nullable = false)
     Integer quantity;
 
+    @Column(name = "remaining_qty", nullable = false)
+    Integer remainingQty;
+
     @NotNull(message = "Giá nhập không được để trống")
     @DecimalMin(value = "0.0", inclusive = false, message = "Giá nhập phải lớn hơn 0")
     @Column(nullable = false,name = "unit_cost")
     BigDecimal unitCost;
+
+    @PrePersist
+    public void onCreate() {
+        if (remainingQty == null) {
+            remainingQty = quantity; // Khi tạo lô mới
+        }
+    }
 }

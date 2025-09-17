@@ -6,6 +6,7 @@ import com.example.Shoe_shop.dto.response.CategoryResponse;
 import com.example.Shoe_shop.service.CategoryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,6 +18,7 @@ public class CategoryController {
     private final CategoryService categoryService;
 
     @PostMapping("")
+    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<CategoryResponse> createCategory(@RequestBody @Valid CategoryRequest categoryRequest) {
         categoryService.createCategory(categoryRequest);
         return ApiResponse.<CategoryResponse>builder()
@@ -49,6 +51,7 @@ public class CategoryController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<CategoryResponse> deleteCategory(@PathVariable Long id) {
         categoryService.deleteCategory(id);
         return ApiResponse.<CategoryResponse>builder()

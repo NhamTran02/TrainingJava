@@ -5,6 +5,7 @@ import com.example.Shoe_shop.dto.request.ProductSearchRequest;
 import com.example.Shoe_shop.dto.response.PagedResponse;
 import com.example.Shoe_shop.dto.response.ProductResponse;
 
+import java.util.List;
 
 
 public interface ProductService {

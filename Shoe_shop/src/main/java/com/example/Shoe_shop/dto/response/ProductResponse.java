@@ -1,10 +1,12 @@
 package com.example.Shoe_shop.dto.response;
 
+import lombok.Builder;
 import lombok.Data;
 
 import java.util.List;
 
 @Data
+@Builder
 public class ProductResponse {
     private Long id;
     private String name;

@@ -8,9 +8,9 @@ import com.example.Shoe_shop.dto.response.ProductResponse;
 import com.example.Shoe_shop.service.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("/product")
@@ -19,6 +19,7 @@ public class ProductController {
     private final ProductService productService;
 
     @PostMapping("")
+    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<ProductResponse> createProduct(@RequestBody @Valid ProductRequest request) {
         ProductResponse response = productService.createProduct(request);
         return ApiResponse.<ProductResponse>builder()
@@ -52,7 +53,9 @@ public class ProductController {
     }
 
 
+
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<ProductResponse> updateProduct(@PathVariable Long id,
                                                       @RequestBody @Valid ProductRequest request) {
         ProductResponse response = productService.updateProduct(id, request);
@@ -63,6 +66,7 @@ public class ProductController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<Void> deleteProduct(@PathVariable Long id) {
         productService.softDeleteProduct(id);
         return ApiResponse.<Void>builder()

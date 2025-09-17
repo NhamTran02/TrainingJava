@@ -5,7 +5,7 @@ import com.example.Shoe_shop.dto.request.RegisterRequest;
 import com.example.Shoe_shop.dto.response.AuthenticationResponse;
 
 public interface AuthenticationService {
-    AuthenticationResponse register(RegisterRequest request);
+    void register(RegisterRequest request);
     AuthenticationResponse login(AuthenticationRequest request);
     AuthenticationResponse refresh(String refreshToken);
     void logout(String tokenValue);

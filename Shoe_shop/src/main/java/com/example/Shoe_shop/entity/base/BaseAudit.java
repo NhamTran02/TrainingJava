@@ -14,20 +14,20 @@ import java.time.LocalDateTime;
 @MappedSuperclass
 public abstract class BaseAudit extends BaseId{
     @Column(name = "created_at")
-    private LocalDateTime createTime;
+    private LocalDateTime createdAt;
 
     @Column(name = "updated_at")
-    private LocalDateTime updateTime;
+    private LocalDateTime updatedAt;
 
     @PrePersist
     public void onCreate(){
-        createTime=LocalDateTime.now();
-        updateTime=LocalDateTime.now();
+        createdAt=LocalDateTime.now();
+        updatedAt=LocalDateTime.now();
     }
 
     @PreUpdate
     public void onUpdate(){
-        updateTime=LocalDateTime.now();
+        updatedAt=LocalDateTime.now();
     }
 
 }

@@ -58,6 +58,7 @@ public class JwtServiceImpl implements JwtService {
         Instant now = Instant.now();
         return Jwts.builder()
                 .setSubject(user.getUsername())
+                .claim("id", user.getId())
                 .claim("roles", List.of(user.getRole().getRoleName()))
                 .setIssuedAt(Date.from(now))
                 .setExpiration(Date.from(now.plus(accessExpiryMinutes, ChronoUnit.HOURS)))

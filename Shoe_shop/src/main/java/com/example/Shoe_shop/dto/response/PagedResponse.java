@@ -15,6 +15,5 @@ public class PagedResponse<T> {
     private int size;               // số bản ghi/trang
     private long totalElements;     // tổng số bản ghi
     private int totalPages;         // tổng số trang
-    private boolean last;           // có phải trang cuối cùng
     private List<T> content;        // danh sách dữ liệu
 }

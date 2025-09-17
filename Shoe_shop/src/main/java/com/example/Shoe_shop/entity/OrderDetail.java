@@ -13,11 +13,12 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
+@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Table(name = "order_details")
 public class OrderDetail extends BaseId {
 
-    @Min(value = 1, message = "Số lượng phải ít nhất là 1")
+    @Min(value = 1, message = "QUANTITY_MIN_1")
     @Column(nullable = false)
     Integer quantity;
 

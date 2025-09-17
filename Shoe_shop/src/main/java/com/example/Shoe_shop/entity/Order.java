@@ -10,12 +10,14 @@ import lombok.experimental.FieldDefaults;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.UUID;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
+@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Table(name = "orders")
 public class Order extends BaseAudit {
@@ -42,22 +44,23 @@ public class Order extends BaseAudit {
     @JoinColumn(name = "shipping_method_id")
     ShippingMethod shippingMethod;
 
-    @NotBlank(message = "Địa chỉ không được bỏ trống")
+    @NotBlank(message = "ADDRESS_INVALID")
     @Column(name = "shipping_address")
     String shippingAddress;
 
     String note;
 
-    @Pattern(regexp = "^0[0-9]{9}$", message = "Số điện thoại phải 10 số")
-    @Column(name = "tracking_number")
+    @NotBlank(message = "TRACKING_NUMBER_BLANK")
+    @Column(name = "tracking_number",unique = true,nullable = false)
     String trackingNumber;
 
     @Column(name = "shipping_fee")
     BigDecimal shippingFee = BigDecimal.ZERO;
 
-    @OneToMany(mappedBy = "order")
+    @OneToMany(mappedBy = "order",cascade = CascadeType.ALL)
     List<OrderDetail> orderDetails;
 
     @OneToMany(mappedBy = "order")
     List<Review> reviews;
+
 }

@@ -3,17 +3,26 @@ package com.example.Shoe_shop.service.impl;
 import com.example.Shoe_shop.dto.request.OrderRequest;
 import com.example.Shoe_shop.dto.response.CartItemResponse;
 import com.example.Shoe_shop.dto.response.OrderResponse;
+import com.example.Shoe_shop.dto.response.PagedResponse;
 import com.example.Shoe_shop.entity.*;
 import com.example.Shoe_shop.exception.AppException;
 import com.example.Shoe_shop.exception.ErrorCode;
 import com.example.Shoe_shop.mapper.OrderMapper;
 import com.example.Shoe_shop.repository.*;
 import com.example.Shoe_shop.service.OrderService;
+import com.example.Shoe_shop.utils.CheckRole;
 import com.example.Shoe_shop.utils.EntityValidatorUtil;
 import com.example.Shoe_shop.utils.TrackingNumberUtil;
+import com.example.Shoe_shop.utils.enums.OrderStatus;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,7 +44,7 @@ public class OrderServiceImpl implements OrderService {
 
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public OrderResponse createOrderFromCart(Long userId,OrderRequest orderRequest) {
         User user=entityValidatorUtil.requireUser(userId);
         Long cartId= cartJdbcRepository.getCartIdByUserId(user.getId());
@@ -122,6 +131,88 @@ public class OrderServiceImpl implements OrderService {
                         orderSummaryProjection.getStatus(),
                         orderSummaryProjection.getCreatedAt()
                 )).toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public PagedResponse<OrderResponse> getAllOrder(int page, int size, String sortBy, String sortDir) {
+        Pageable pageable = PageRequest.of(page, Math.min(size, 100),
+                Sort.by(Sort.Direction.fromString(sortDir), sortBy));
+       Page<Order> ordersPage=orderRepository.findAll(pageable);
+       List<OrderResponse> content=ordersPage.stream()
+               .map(orderMapper::toResponse)
+               .toList();
+        return new PagedResponse<>(
+                ordersPage.getNumber(),
+                ordersPage.getSize(),
+                ordersPage.getTotalElements(),
+                ordersPage.getTotalPages(),
+                content
+        );
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public PagedResponse<OrderResponse> getOrdersbyStatus(Long userId, OrderStatus status, Pageable pageable) {
+        Page<Order> orders;
+        if(CheckRole.isAdmin()){
+            orders=orderRepository.findAllByStatus(status, pageable);
+        }
+        else {
+            orders=orderRepository.findAllByUserIdAndStatus(userId, status, pageable);
+        }
+        List<OrderResponse> content=orders.getContent().stream()
+                .map(orderMapper::toResponse)
+                .toList();
+        return new PagedResponse<>(
+                orders.getNumber(),
+                orders.getSize(),
+                orders.getTotalElements(),
+                orders.getTotalPages(),
+                content
+        );
+    }
+
+    @Override
+    @Transactional
+    public OrderResponse updateOrderStatus(Long id, OrderStatus newStatus) {
+        Order order=entityValidatorUtil.requireOrder(id);
+        if(!isValidStatusTransition(order.getStatus(),newStatus)){
+            throw new AppException(ErrorCode.INVALID_STATUS_TRANSITION);
+        }
+        order.setStatus(newStatus);
+        order = orderRepository.save(order);
+        return orderMapper.toResponse(order);
+    }
+
+    @Override
+    @Transactional
+    public void cancelOrder(Long orderId) {
+        Order order=entityValidatorUtil.requireOrder(orderId);
+
+        Authentication auth=SecurityContextHolder.getContext().getAuthentication();
+        String username=auth.getName();
+        if (CheckRole.isAdmin()) {
+            order.setStatus(OrderStatus.CANCELLED);
+        } else {
+            if (!order.getUser().getUsername().equals(username)) {
+                throw new AppException(ErrorCode.FORBIDDEN);
+            }
+            if (order.getStatus() != OrderStatus.PENDING) {
+                throw new AppException(ErrorCode.ORDER_STATUS_IS_NOT_PENDING);
+            }
+            order.setStatus(OrderStatus.CANCELLED);
+        }
+        orderRepository.save(order);
+    }
+
+    private boolean isValidStatusTransition(OrderStatus current, OrderStatus next) {
+        switch(current) {
+            case PENDING: return next == OrderStatus.PROCESSING || next == OrderStatus.CANCELLED;
+            case PROCESSING: return next == OrderStatus.SHIPPED || next == OrderStatus.CANCELLED;
+            case SHIPPED: return next == OrderStatus.DELIVERED;
+            default: return false;
+        }
     }
 
 }

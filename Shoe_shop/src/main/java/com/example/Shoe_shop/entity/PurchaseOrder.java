@@ -1,10 +1,7 @@
 package com.example.Shoe_shop.entity;
 
 import com.example.Shoe_shop.entity.base.BaseId;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -30,4 +27,11 @@ public class PurchaseOrder extends BaseId {
 
     @OneToMany(mappedBy = "purchaseOrder")
     List<PurchaseOrderItem> items;
+
+    @PrePersist
+    public void onCreate() {
+        if (orderDate == null) {
+            orderDate = LocalDateTime.now();
+        }
+    }
 }

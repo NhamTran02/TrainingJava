@@ -13,6 +13,7 @@ import com.example.Shoe_shop.service.AuthenticationService;
 import com.example.Shoe_shop.service.JwtService;
 import com.example.Shoe_shop.service.TokenService;
 import com.example.Shoe_shop.service.UserService;
+import com.example.Shoe_shop.utils.EntityValidatorUtil;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -24,20 +25,21 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE)
+@FieldDefaults(level = AccessLevel.PRIVATE,makeFinal = true)
 public class AuthenticationServiceImpl implements AuthenticationService {
-    final UserService userService;
-    final JwtService jwtService;
-    final TokenService tokenService;
-    final AuthenticationManager authenticationManager;
-    final PasswordEncoder passwordEncoder;
-    final UserRepository userRepository;
-    final RoleRepository roleRepository;
+    UserService userService;
+    JwtService jwtService;
+    TokenService tokenService;
+    AuthenticationManager authenticationManager;
+    PasswordEncoder passwordEncoder;
+    UserRepository userRepository;
+    RoleRepository roleRepository;
+    EntityValidatorUtil entityValidatorUtil;
 
 
     @Override
     @Transactional
-    public AuthenticationResponse register(RegisterRequest request) {
+    public void register(RegisterRequest request) {
         if (userRepository.findByUsername(request.getUsername()).isPresent()) {
             throw new AppException(ErrorCode.USER_EXISTED);
         }
@@ -48,8 +50,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             throw new AppException(ErrorCode.PHONE_NUMBER_EXISTED);
         }
 
-        Role role = roleRepository.findById(request.getRoleId())
-                .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND));
+        Role role = entityValidatorUtil.requireRole(request.getRoleId());
 
         User user = User.builder()
                 .username(request.getUsername())
@@ -64,7 +65,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         User savedUser = userRepository.save(user);
 
-        return AuthenticationResponse.builder()
+        AuthenticationResponse.builder()
                 .userId(savedUser.getId())
                 .build();
     }
@@ -77,8 +78,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 new UsernamePasswordAuthenticationToken(req.getUsername(), req.getPassword())
         );
 
-        User user = userService.findByUsername(req.getUsername())
-                .orElseThrow(() -> new RuntimeException("USER_NOT_FOUND"));
+        User user=entityValidatorUtil.requireUserName(req.getUsername());
 
         String access = jwtService.generateAccessToken(user);
         String refresh = jwtService.generateRefreshToken(user);
@@ -115,7 +115,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
 
         String username = jwtService.getUsernameFromRefreshToken(refreshToken);
-        User user = userService.findByUsername(username).orElseThrow(() -> new RuntimeException("USER_NOT_FOUND"));
+        User user = entityValidatorUtil.requireUserName(username);
 
         String newAccess = jwtService.generateAccessToken(user);
         String newRefresh = jwtService.generateRefreshToken(user);

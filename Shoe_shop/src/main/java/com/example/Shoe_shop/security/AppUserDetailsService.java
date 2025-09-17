@@ -1,6 +1,8 @@
 package com.example.Shoe_shop.security;
 
 import com.example.Shoe_shop.entity.User;
+import com.example.Shoe_shop.exception.AppException;
+import com.example.Shoe_shop.exception.ErrorCode;
 import com.example.Shoe_shop.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,7 +18,7 @@ public class AppUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User u = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
         return new AppUserDetails(u);
     }
 }

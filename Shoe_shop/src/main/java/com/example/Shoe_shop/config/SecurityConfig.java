@@ -1,6 +1,7 @@
 package com.example.Shoe_shop.config;
 
 import com.example.Shoe_shop.security.AppUserDetailsService;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,25 +24,24 @@ public class SecurityConfig {
     private final AppUserDetailsService userDetailsService;
     private final JwtAuthenticationFilter jwtAuthFilter;
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .csrf(csrf -> csrf.disable())
-                .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                )
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**","/category/**","/brand/**","/product/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/user/**").hasAuthority("ADMIN")
-                        .requestMatchers(HttpMethod.PUT,"/user/**").hasAnyAuthority("ADMIN","USER")
-                        .requestMatchers(HttpMethod.DELETE,"/user/**").hasAnyAuthority("ADMIN")
-                        .anyRequest().authenticated()
-                )
-                .authenticationProvider(daoAuthProvider())
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+@Bean
+public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    http
+            .csrf(csrf -> csrf.disable())
+            .sessionManagement(session ->
+                    session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            )
+            .authorizeHttpRequests(auth -> auth
+                    .requestMatchers("/auth/**","/product/**","/brand/**","/category/**").permitAll()
+                    .anyRequest().authenticated()
+            )
+            .exceptionHandling(exception -> exception
+                    .authenticationEntryPoint(new JwtAuthenticationEntryPoint())
+            )
+            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
-        return http.build();
-    }
+    return http.build();
+}
 
     @Bean
     public DaoAuthenticationProvider daoAuthProvider() {
