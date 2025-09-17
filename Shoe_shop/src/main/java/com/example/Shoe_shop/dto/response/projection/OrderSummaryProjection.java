@@ -1,4 +1,10 @@
 package com.example.Shoe_shop.dto.response.projection;
 
-public class OrderSummaryProjection {
+import java.math.BigDecimal;
+
+public interface OrderSummaryProjection {
+    Long getId();
+    BigDecimal getTotalAmount();
+    String getStatus();
+    String getCreatedAt();
 }
