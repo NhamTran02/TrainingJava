@@ -67,6 +67,4 @@ public class User extends BaseAudit {
 
     @OneToMany(mappedBy = "user")
     private List<Wishlist> wishlists;
-
-
 }

@@ -30,6 +30,7 @@ public class CartServiceImpl implements CartService {
     EntityValidatorUtil entityValidatorUtil;
 
     @Override
+    @Transactional(readOnly = true)
     public CartResponse getCartByUserId(Long id) {
         if(!userRepository.existsById(id)) {
             throw new AppException(ErrorCode.USER_NOT_FOUND);

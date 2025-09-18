@@ -53,4 +53,8 @@ public class ProductVariant extends BaseId {
     @OneToMany(mappedBy = "variant")
     List<PurchaseOrderItem> purchaseOrderItems;
 
+    public String getVariantName(){
+        return color + " - " + size;
+    }
+
 }

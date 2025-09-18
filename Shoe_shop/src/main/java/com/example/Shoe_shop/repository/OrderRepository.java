@@ -14,7 +14,8 @@ import java.util.List;
 
 @Repository
 public interface OrderRepository extends JpaRepository<Order,Long> {
-    @Query(value = "SELECT id, total_amount, status, DATE_FORMAT(created_at, '%Y-%m-%d %H:%i:%s') AS createdAt " +
+    @Query(value = "SELECT id, total_amount, status,shipping_fee,(total_amount+shipping_fee) AS totalSum," +
+            " DATE_FORMAT(created_at, '%Y-%m-%d %H:%i:%s') AS createdAt " +
             "FROM orders WHERE user_id = :userId ORDER BY created_at DESC",
             nativeQuery = true)
     List<OrderSummaryProjection> findOrderByUserId(Long userId);

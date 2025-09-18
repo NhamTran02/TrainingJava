@@ -34,12 +34,14 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public CategoryResponse getCategoryById(Long categoryId) {
         Category category=entityValidatorUtil.requireCategory(categoryId);
         return categoryMapper.toResponse(category);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<CategoryResponse> getAllCategories() {
         List<Category> categories=categoryRepository.findAll();
         return categoryMapper.toResponseList(categories);

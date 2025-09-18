@@ -26,6 +26,7 @@ public class BrandServiceImpl implements BrandService {
     EntityValidatorUtil entityValidatorUtil;
 
     @Override
+    @Transactional
     public BrandResponse createBrand(BrandRequest request) {
         Brand brand = brandMapper.toEntity(request);
         brandRepository.save(brand);
@@ -33,6 +34,7 @@ public class BrandServiceImpl implements BrandService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public BrandResponse getBrandById(Long id) {
         Brand brand = brandRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.BRAND_NOT_FOUND));
@@ -40,6 +42,7 @@ public class BrandServiceImpl implements BrandService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<BrandResponse> getAllBrands() {
         List<Brand> brands = brandRepository.findAll();
         return brandMapper.toResponseList(brands);

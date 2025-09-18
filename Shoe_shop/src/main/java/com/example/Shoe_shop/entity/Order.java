@@ -55,7 +55,7 @@ public class Order extends BaseAudit {
     String trackingNumber;
 
     @Column(name = "shipping_fee")
-    BigDecimal shippingFee = BigDecimal.ZERO;
+    BigDecimal shippingFee;
 
     @OneToMany(mappedBy = "order",cascade = CascadeType.ALL)
     List<OrderDetail> orderDetails;

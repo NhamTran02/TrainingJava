@@ -119,6 +119,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<OrderResponse> getMyOrders(Long userId) {
         if(!userRepository.existsById(userId)){
             throw new AppException(ErrorCode.USER_NOT_FOUND);
@@ -129,7 +130,9 @@ public class OrderServiceImpl implements OrderService {
                         orderSummaryProjection.getId(),
                         orderSummaryProjection.getTotalAmount(),
                         orderSummaryProjection.getStatus(),
-                        orderSummaryProjection.getCreatedAt()
+                        orderSummaryProjection.getCreatedAt(),
+                        orderSummaryProjection.getShippingFee(),
+                        orderSummaryProjection.getTotalSum()
                 )).toList();
     }
 

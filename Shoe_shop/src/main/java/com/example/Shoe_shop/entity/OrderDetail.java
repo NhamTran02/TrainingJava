@@ -35,4 +35,5 @@ public class OrderDetail extends BaseId {
     @ManyToOne
     @JoinColumn(name = "variant_id", nullable = false)
     ProductVariant variant;
+
 }

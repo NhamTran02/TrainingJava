@@ -51,6 +51,7 @@ public class WishlistServiceImpl implements WishlistService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ProductResponse> getWishlist(Long userId) {
         List<Wishlist> wishlists = wishlistRepository.findByUserId(userId);
         return wishlists.stream().map(wishlist ->

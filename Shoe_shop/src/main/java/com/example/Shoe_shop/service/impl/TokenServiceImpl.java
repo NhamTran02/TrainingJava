@@ -5,6 +5,7 @@ import com.example.Shoe_shop.repository.TokenRepository;
 import com.example.Shoe_shop.service.TokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -14,6 +15,7 @@ public class TokenServiceImpl implements TokenService {
     private final TokenRepository tokenRepository;
 
     @Override
+    @Transactional
     public Token save(Token token) {
         return tokenRepository.save(token);
     }
@@ -34,12 +36,14 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
+    @Transactional
     public void blacklist(Token token) {
         token.setBlacklisted(true);
         tokenRepository.save(token);
     }
 
     @Override
+    @Transactional
     public void blacklistAllByUsername(String username) {
         tokenRepository.findByUsernameAndBlacklistedFalse(username)
                 .forEach(t -> {

@@ -41,6 +41,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<UserResponse> getAllUsers() {
 
         List<User> users = CheckRole.isAdmin()
@@ -52,6 +53,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public UserResponse getUserById(Long id) {
         User user= entityValidatorUtil.requireUser(id);
 

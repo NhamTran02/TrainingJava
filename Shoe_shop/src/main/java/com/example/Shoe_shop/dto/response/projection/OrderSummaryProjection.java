@@ -7,4 +7,6 @@ public interface OrderSummaryProjection {
     BigDecimal getTotalAmount();
     String getStatus();
     String getCreatedAt();
+    BigDecimal getShippingFee();
+    BigDecimal getTotalSum();
 }

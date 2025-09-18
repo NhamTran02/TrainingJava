@@ -56,6 +56,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ProductResponse getProductById(Long id) {
         Product product = entityValidatorUtil.requireProduct(id);
         if(!CheckRole.isAdmin() && product.getDeleted()){

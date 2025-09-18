@@ -15,4 +15,6 @@ public class OrderResponse {
     BigDecimal totalAmount;
     String status;
     String createdAt;
+    BigDecimal shippingFee;
+    BigDecimal totalSum;
 }

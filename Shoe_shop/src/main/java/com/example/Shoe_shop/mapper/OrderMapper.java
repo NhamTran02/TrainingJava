@@ -19,6 +19,7 @@ public interface OrderMapper {
 
     @Mapping(target = "status", source = "status")
     @Mapping(target = "createdAt", expression = "java(order.getCreatedAt().toString())")
+    @Mapping(target = "totalSum",expression = "java(order.getTotalAmount().add(order.getShippingFee()))")
     OrderResponse toResponse(Order order);
 
 }

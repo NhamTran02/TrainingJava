@@ -26,9 +26,6 @@ public class CartJdbcRepository {
     public Long getCartIdByUserId(Long userId) {
         String sql = "select id from carts where user_id = ?";
         List<Long> cartIds = jdbcTemplate.queryForList(sql, Long.class, userId);
-//        if (cartIds.isEmpty()) {
-//            throw new AppException(ErrorCode.CART_NULL);
-//        }
         if (cartIds.isEmpty()) {
             // tạo cart mới nếu chưa có
             jdbcTemplate.update("INSERT INTO carts(user_id) VALUES (?)", userId);
