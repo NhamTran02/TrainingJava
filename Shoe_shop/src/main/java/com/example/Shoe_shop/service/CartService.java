@@ -8,4 +8,6 @@ public interface CartService {
     CartResponse  addorUpdateItemToCart(CartItemRequest request, Long userId);
     CartResponse  removeItemFromCart(CartItemRequest request, Long userId);
     CartResponse clearCart(Long cartId);
+    void toggleSelected(Long userId, Long variantId, boolean selected);
+
 }

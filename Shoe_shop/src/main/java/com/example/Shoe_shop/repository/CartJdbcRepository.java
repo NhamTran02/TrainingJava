@@ -46,6 +46,7 @@ public class CartJdbcRepository {
                 SELECT ci.id,
                        ci.variant_id,
                        ci.quantity,
+                       ci.selected,
                        COALESCE(v.sale_price, v.regular_price) AS unit_price,
                        p.name AS product_name
                 FROM cart_items ci
@@ -90,7 +91,6 @@ public class CartJdbcRepository {
         return namedParameterJdbcTemplate.query(sql, params, new CartItemMapper());
     }
 
-
     public void addOrUpdateCartItem(Long cartId, Long variantId, int quantity) {
         String checkSql = "SELECT COUNT(*) FROM cart_items WHERE cart_id=? AND variant_id=?";
         Integer count = jdbcTemplate.queryForObject(checkSql, Integer.class, cartId, variantId);
@@ -101,10 +101,17 @@ public class CartJdbcRepository {
             );
         } else {
             jdbcTemplate.update(
-                    "INSERT INTO cart_items(cart_id, variant_id, quantity) VALUES (?,?,?)",
-                    cartId, variantId, quantity
+                    "INSERT INTO cart_items(cart_id, variant_id, quantity,selected) VALUES (?,?,?,?)",
+                    cartId, variantId, quantity,false
             );
         }
+    }
+
+    public void updateSelected(Long cartId, Long variantId, boolean selected) {
+        jdbcTemplate.update(
+                "UPDATE cart_items SET selected=? WHERE cart_id=? AND variant_id=?",
+                selected, cartId, variantId
+        );
     }
 
     public void removeItem(Long cartId, Long variantId){

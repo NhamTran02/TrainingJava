@@ -36,6 +36,19 @@ public class CartController {
                 .build();
     }
 
+    @PutMapping("/{userId}/{variantId}")
+    @PreAuthorize("#userId == authentication.principal.user.id")
+    public ApiResponse<Void> toggleSelected(
+            @PathVariable Long userId,
+            @PathVariable Long variantId,
+            @RequestParam boolean selected) {
+        cartService.toggleSelected(userId, variantId, selected);
+        return ApiResponse.<Void>builder()
+                .code(200)
+                .message("Success")
+                .build();
+    }
+
     @DeleteMapping("/{userId}")
     @PreAuthorize("#userId == authentication.principal.user.id or hasRole('ADMIN')")
     public ApiResponse<CartResponse> removeItem(@PathVariable Long userId,@RequestBody CartItemRequest cartItemRequest){

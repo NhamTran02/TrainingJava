@@ -20,7 +20,9 @@ public class CartItemMapper implements RowMapper<CartItemResponse> {
         BigDecimal price = rs.getBigDecimal("unit_price");
         cartItemResponse.setUnitPrice(price);
 
+
         cartItemResponse.setSubtotal(cartItemResponse.getUnitPrice().multiply(BigDecimal.valueOf(cartItemResponse.getQuantity())));
+        cartItemResponse.setSelected(rs.getBoolean("selected"));
 
         return cartItemResponse;
     }

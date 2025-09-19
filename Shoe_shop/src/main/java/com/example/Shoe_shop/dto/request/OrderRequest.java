@@ -7,8 +7,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.util.List;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -25,10 +23,4 @@ public class OrderRequest {
 
     @NotNull(message = "SHIPPING_METHOD_REQUIRED")
     ShippingMethod shippingMethod;
-
-    @NotBlank(message = "TRACKING_NUMBER_BLANK")
-    String trackingNumber;
-
-    List<Long> cartItemIds;
-
 }

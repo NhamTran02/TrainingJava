@@ -2,7 +2,6 @@ package com.example.Shoe_shop.entity;
 
 import com.example.Shoe_shop.entity.base.BaseAudit;
 import com.example.Shoe_shop.utils.enums.OrderStatus;
-import com.example.Shoe_shop.utils.enums.PaymentMethod;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
@@ -10,7 +9,6 @@ import lombok.experimental.FieldDefaults;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.UUID;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
@@ -36,10 +34,6 @@ public class Order extends BaseAudit {
     @JoinColumn(name = "user_id", nullable = false)
     User user;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false,name = "payment_method")
-    PaymentMethod paymentMethod;
-
     @ManyToOne
     @JoinColumn(name = "shipping_method_id")
     ShippingMethod shippingMethod;
@@ -63,4 +57,6 @@ public class Order extends BaseAudit {
     @OneToMany(mappedBy = "order")
     List<Review> reviews;
 
+    @OneToMany(mappedBy = "order")
+    private List<Payment> payments;
 }

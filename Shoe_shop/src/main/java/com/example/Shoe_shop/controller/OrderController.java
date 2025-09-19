@@ -6,6 +6,7 @@ import com.example.Shoe_shop.dto.response.OrderResponse;
 import com.example.Shoe_shop.dto.response.PagedResponse;
 import com.example.Shoe_shop.service.OrderService;
 import com.example.Shoe_shop.utils.enums.OrderStatus;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -26,8 +27,8 @@ public class OrderController {
 
     @PostMapping("/{userId}")
     @PreAuthorize("#userId == authentication.principal.user.id or hasRole('ADMIN')")
-    public ApiResponse<OrderResponse> createOrder(@PathVariable Long userId,@RequestBody OrderRequest orderRequest){
-        OrderResponse response=orderService.createOrderFromCart(userId,orderRequest);
+    public ApiResponse<OrderResponse> createOrder(@PathVariable Long userId, @RequestBody OrderRequest orderRequest, HttpServletRequest request) {
+        OrderResponse response=orderService.createOrderFromCart(userId,orderRequest,request);
         return ApiResponse.<OrderResponse>builder()
                 .code(200)
                 .result(response)

@@ -58,6 +58,7 @@ public enum ErrorCode {
     ORDER_ID_REQUIRED(400,"Order id required"),
     INVALID_STATUS_TRANSITION(400,"Invalid status transition"),
     ORDER_STATUS_IS_NOT_PENDING(400,"Only orders with PENDING status can be cancelled by users"),
+    ORDER_NOT_FOUND(400,"Order not found"),
     ;
 
     private final int code;

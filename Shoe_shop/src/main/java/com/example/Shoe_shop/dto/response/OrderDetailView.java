@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -16,7 +17,7 @@ import java.util.List;
 public class OrderDetailView {
     Long orderId;
     String status;
-    String createdAt;
+    LocalDateTime createdAt;
     BigDecimal totalAmount;
     BigDecimal shippingFee;
     BigDecimal totalSum;

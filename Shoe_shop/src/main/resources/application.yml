@@ -35,3 +35,17 @@ jwt:
 app:
   upload:
     dir: uploads
+
+vnpay:
+#  tmnCode: ETZKPEHL
+#  secretKey: YUZFYVVO04ETB2H97OQ970LT60EXNFTG
+  tmnCode: MVX1TM4Y
+  secretKey: A0MNUDBXHIO4X5XOCDGPQBMSG8A6K42B
+  paymentUrl: https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
+  returnUrl: https://8080/api/vnpay/vnpay-callback
+  ipnUrl: https://sandbox.vnpayment.vn/vnpaygw-sit-testing/user/login
+  version: 2.1.0
+
+crm:
+  usernamevnpay: "nguyenluong140504@gmail.com"
+  passwordvnpay: "@Nguyenluong1405"

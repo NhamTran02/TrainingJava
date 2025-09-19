@@ -32,7 +32,7 @@ public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Excepti
                     session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
             .authorizeHttpRequests(auth -> auth
-                    .requestMatchers("/auth/**","/product/**","/brand/**","/category/**").permitAll()
+                    .requestMatchers("/auth/**","/product/**","/brand/**","/category/**","/vnpay/**").permitAll()
                     .anyRequest().authenticated()
             )
             .exceptionHandling(exception -> exception

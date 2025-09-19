@@ -27,4 +27,7 @@ public class CartItem extends BaseId {
     @Min(value = 1,message = "QUANTITY_MIN_1")
     @Column(nullable = false)
     Integer quantity;
+
+    @Column(nullable = false)
+    private Boolean selected = false;
 }

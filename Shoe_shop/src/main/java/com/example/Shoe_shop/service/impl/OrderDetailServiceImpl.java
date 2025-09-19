@@ -41,16 +41,21 @@ public class OrderDetailServiceImpl implements OrderDetailService {
 
         BigDecimal totalSum=order.getTotalAmount().add(order.getShippingFee());
 
+        String paymentMethod = order.getPayments().stream()
+                .min((p1, p2) -> p2.getCreatedAt().compareTo(p1.getCreatedAt()))
+                .map(p -> p.getPaymentMethod().name())
+                .orElse("UNKNOWN");
+
         User buyer=order.getUser();
 
         return new OrderDetailView(
                 order.getId(),
                 order.getStatus().name(),
-                order.getCreatedAt().toString(),
+                order.getCreatedAt(),
                 order.getTotalAmount(),
                 order.getShippingFee(),
                 totalSum,
-                order.getPaymentMethod().name(),
+                paymentMethod,
                 order.getShippingAddress(),
                 order.getTrackingNumber(),
                 order.getNote(),

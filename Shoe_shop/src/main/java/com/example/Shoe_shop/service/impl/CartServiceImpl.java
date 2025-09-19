@@ -7,7 +7,6 @@ import com.example.Shoe_shop.entity.ProductVariant;
 import com.example.Shoe_shop.exception.AppException;
 import com.example.Shoe_shop.exception.ErrorCode;
 import com.example.Shoe_shop.repository.CartJdbcRepository;
-import com.example.Shoe_shop.repository.ProductVariantRepository;
 import com.example.Shoe_shop.repository.UserRepository;
 import com.example.Shoe_shop.service.CartService;
 import com.example.Shoe_shop.utils.EntityValidatorUtil;
@@ -25,7 +24,6 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE,makeFinal=true)
 public class CartServiceImpl implements CartService {
     CartJdbcRepository cartJdbcRepository;
-    ProductVariantRepository productVariantRepository;
     UserRepository userRepository;
     EntityValidatorUtil entityValidatorUtil;
 
@@ -56,8 +54,19 @@ public class CartServiceImpl implements CartService {
         }
         cartJdbcRepository.addOrUpdateCartItem(cartId, request.getVariantId(),  request.getQuantity());
         List<CartItemResponse> itemResponses=cartJdbcRepository.findCartItems(cartId);
-        BigDecimal totalPrice=cartJdbcRepository.getCartTotal(cartId);
+        BigDecimal totalPrice = itemResponses.stream()
+                .filter(CartItemResponse::getSelected)
+                .map(CartItemResponse::getSubtotal)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
         return new CartResponse(cartId,itemResponses,totalPrice);
+    }
+
+    @Transactional
+    @Override
+    public void toggleSelected(Long userId, Long variantId, boolean selected) {
+        Long cartId = cartJdbcRepository.getCartIdByUserId(userId);
+        cartJdbcRepository.updateSelected(cartId, variantId, selected);
     }
 
     @Override

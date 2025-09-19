@@ -17,7 +17,7 @@ public class TrackingNumberUtil {
     public String generateUnique() {
         String tracking;
         do {
-            tracking = "TRK" + UUID.randomUUID().toString().replace("-", "").substring(0, 10);
+            tracking = "TRK" + UUID.randomUUID().toString().substring(0, 10);
         } while (orderRepo.existsByTrackingNumber(tracking));
         return tracking;
     }
