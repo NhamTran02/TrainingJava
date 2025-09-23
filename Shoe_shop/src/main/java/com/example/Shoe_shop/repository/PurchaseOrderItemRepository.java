@@ -17,17 +17,17 @@ public interface PurchaseOrderItemRepository extends JpaRepository<PurchaseOrder
         SELECT poi.unitCost
         FROM PurchaseOrderItem poi
         WHERE poi.variant.id= :variantId
-        ORDER BY poi.purchaseOrder.orderDate DESC 
+        ORDER BY poi.purchaseOrder.orderDate DESC
     """)
     Optional<PurchaseOrderItem> findTopUnitCostByVariantId(@Param("variantId") Long variantId);
 
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("""
         SELECT poi FROM PurchaseOrderItem poi
         where poi.variant.id= :variantId
         AND poi.remainingQty > :quantity
         order by poi.purchaseOrder.orderDate ASC
     """)
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
     List<PurchaseOrderItem> findAllByVariantId(@Param("variantId") Long variantId, @Param("quantity")  Integer quantity);
 
 

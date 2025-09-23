@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -29,16 +28,6 @@ public class UserServiceImpl implements UserService {
     UserMapper userMapper;
     PasswordEncoder passwordEncoder;
     EntityValidatorUtil  entityValidatorUtil;
-
-    @Override
-    public Optional<User> findByUsername(String username) {
-        return userRepository.findByUsername(username);
-    }
-
-    @Override
-    public boolean existsByUsername(String username) {
-        return userRepository.existsByUsername(username);
-    }
 
     @Override
     @Transactional(readOnly = true)
@@ -64,7 +53,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional
     public UserResponse updateUser(Long id, UserUpdateDTO userUpdateDTO) {
         User user = entityValidatorUtil.requireUser(id);
         if (userUpdateDTO.getPhoneNumber() != null) {

@@ -1,7 +1,6 @@
 package com.example.Shoe_shop.specification;
 
 import com.example.Shoe_shop.entity.Product;
-import com.example.Shoe_shop.dto.request.ProductSearchRequest;
 import com.example.Shoe_shop.entity.ProductVariant;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Predicate;

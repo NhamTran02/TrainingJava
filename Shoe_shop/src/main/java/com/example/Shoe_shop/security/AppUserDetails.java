@@ -1,7 +1,6 @@
 package com.example.Shoe_shop.security;
 
 import com.example.Shoe_shop.entity.User;
-import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -9,13 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.List;
 
-@Getter
-public class AppUserDetails implements UserDetails {
-    private final User user;
-
-    public AppUserDetails(User user) {
-        this.user = user;
-    }
+public record AppUserDetails(User user) implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

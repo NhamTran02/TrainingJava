@@ -2,6 +2,7 @@ package com.example.Shoe_shop.entity;
 
 import com.example.Shoe_shop.entity.base.BaseAudit;
 import com.example.Shoe_shop.utils.enums.OrderStatus;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
@@ -58,5 +59,6 @@ public class Order extends BaseAudit {
     List<Review> reviews;
 
     @OneToMany(mappedBy = "order")
+    @JsonIgnore
     private List<Payment> payments;
 }

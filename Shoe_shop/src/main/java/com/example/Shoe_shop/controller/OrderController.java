@@ -2,6 +2,7 @@ package com.example.Shoe_shop.controller;
 
 import com.example.Shoe_shop.dto.request.OrderRequest;
 import com.example.Shoe_shop.dto.response.ApiResponse;
+import com.example.Shoe_shop.dto.response.CancelOrderResponse;
 import com.example.Shoe_shop.dto.response.OrderResponse;
 import com.example.Shoe_shop.dto.response.PagedResponse;
 import com.example.Shoe_shop.service.OrderService;
@@ -99,11 +100,13 @@ public class OrderController {
     }
 
     @PutMapping("/cancel/{orderId}")
-    public ApiResponse<Void> cancelOrder(@PathVariable Long orderId){
+    public ApiResponse<CancelOrderResponse> cancelOrder(@PathVariable Long orderId){
+        CancelOrderResponse response=orderService.cancelOrder(orderId);
         orderService.cancelOrder(orderId);
-        return ApiResponse.<Void>builder()
+        return ApiResponse.<CancelOrderResponse>builder()
                 .code(200)
                 .message("cancel order successfully")
+                .result(response)
                 .build();
     }
 }

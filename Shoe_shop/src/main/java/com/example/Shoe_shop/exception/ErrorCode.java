@@ -58,7 +58,17 @@ public enum ErrorCode {
     ORDER_ID_REQUIRED(400,"Order id required"),
     INVALID_STATUS_TRANSITION(400,"Invalid status transition"),
     ORDER_STATUS_IS_NOT_PENDING(400,"Only orders with PENDING status can be cancelled by users"),
-    ORDER_NOT_FOUND(400,"Order not found"),
+    ORDER_NOT_FOUND(404, "Đơn hàng không tồn tại"),
+    ORDER_NOT_PAYABLE(400,"Order not payable"),
+    INVALID_SIGNATURE(400,"Invalid signature"),
+    PAYMENT_NOT_FOUND(404,"Payment not found"),
+    PAYMENT_ALREADY_SUCCESS(400,"Payment already successful"),
+    ORDER_CANNOT_BE_CANCELLED(400,"Order can not be cancelled"),
+    ORDER_BY_COD_CANNOT_BE_CANCELLED(400, "Đơn hàng không thể hủy do đã xử lý hoặc giao(thanh toán bằng COD)"),
+    ORDER_BY_VNPAY_CANNOT_BE_CANCELLED(400, "Đơn hàng không thể hủy do đã xử lý hoặc giao(thanh toán bằng VNPAY)"),
+    PAYMENT_CANNOT_REFUND(400,"Payment can not be refunded"),
+    PAYMENT_METHOD_NOT_SUPPORT_REFUND(400,"Payment method not support refund"),
+    REFUND_FAILED(400, "Hoàn tiền thất bại, vui lòng thử lại"),
     ;
 
     private final int code;

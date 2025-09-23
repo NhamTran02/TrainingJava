@@ -3,6 +3,7 @@ package com.example.Shoe_shop.entity;
 import com.example.Shoe_shop.entity.base.BaseAudit;
 import com.example.Shoe_shop.utils.enums.PaymentMethod;
 import com.example.Shoe_shop.utils.enums.PaymentStatus;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -20,6 +21,7 @@ import java.time.LocalDateTime;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Payment extends BaseAudit {
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "order_id", nullable = false)
     private Order order;
 
@@ -47,5 +49,8 @@ public class Payment extends BaseAudit {
     private LocalDateTime payDate;
 
     private String note;
+
+    @Column(name = "transaction_no", unique = true)
+    private String transactionNo;
 
 }

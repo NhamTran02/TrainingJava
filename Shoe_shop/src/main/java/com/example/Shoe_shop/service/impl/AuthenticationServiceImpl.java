@@ -7,12 +7,10 @@ import com.example.Shoe_shop.entity.Token;
 import com.example.Shoe_shop.entity.User;
 import com.example.Shoe_shop.exception.AppException;
 import com.example.Shoe_shop.exception.ErrorCode;
-import com.example.Shoe_shop.repository.RoleRepository;
 import com.example.Shoe_shop.repository.UserRepository;
 import com.example.Shoe_shop.service.AuthenticationService;
 import com.example.Shoe_shop.service.JwtService;
 import com.example.Shoe_shop.service.TokenService;
-import com.example.Shoe_shop.service.UserService;
 import com.example.Shoe_shop.utils.EntityValidatorUtil;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -27,18 +25,16 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE,makeFinal = true)
 public class AuthenticationServiceImpl implements AuthenticationService {
-    UserService userService;
     JwtService jwtService;
     TokenService tokenService;
     AuthenticationManager authenticationManager;
     PasswordEncoder passwordEncoder;
     UserRepository userRepository;
-    RoleRepository roleRepository;
     EntityValidatorUtil entityValidatorUtil;
 
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public void register(RegisterRequest request) {
         if (userRepository.findByUsername(request.getUsername()).isPresent()) {
             throw new AppException(ErrorCode.USER_EXISTED);

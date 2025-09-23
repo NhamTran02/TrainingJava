@@ -11,12 +11,12 @@ import java.math.BigDecimal;
 public interface ProductVariantRepository extends JpaRepository<ProductVariant,Long> {
     @Query(
             value = """
-              SELECT 
-                  CASE WHEN sale_price IS NOT NULL 
-                       THEN sale_price 
-                       ELSE regular_price 
-                  END 
-              FROM product_variants 
+              SELECT
+                  CASE WHEN sale_price IS NOT NULL
+                       THEN sale_price
+                       ELSE regular_price
+                  END
+              FROM product_variants
               WHERE id = :variantId
             """,
             nativeQuery = true

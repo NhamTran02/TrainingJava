@@ -26,7 +26,7 @@ public class BrandServiceImpl implements BrandService {
     EntityValidatorUtil entityValidatorUtil;
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public BrandResponse createBrand(BrandRequest request) {
         Brand brand = brandMapper.toEntity(request);
         brandRepository.save(brand);
