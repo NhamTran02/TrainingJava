@@ -1,5 +1,6 @@
 package com.example.Shoe_shop.service.impl;
 
+import com.example.Shoe_shop.dto.request.ChangePasswordRequest;
 import com.example.Shoe_shop.dto.request.UserUpdateDTO;
 import com.example.Shoe_shop.dto.response.UserResponse;
 import com.example.Shoe_shop.entity.Role;
@@ -8,6 +9,7 @@ import com.example.Shoe_shop.exception.AppException;
 import com.example.Shoe_shop.exception.ErrorCode;
 import com.example.Shoe_shop.mapper.UserMapper;
 import com.example.Shoe_shop.repository.UserRepository;
+import com.example.Shoe_shop.service.TokenService;
 import com.example.Shoe_shop.service.UserService;
 import com.example.Shoe_shop.utils.CheckRole;
 import com.example.Shoe_shop.utils.EntityValidatorUtil;
@@ -28,6 +30,7 @@ public class UserServiceImpl implements UserService {
     UserMapper userMapper;
     PasswordEncoder passwordEncoder;
     EntityValidatorUtil  entityValidatorUtil;
+    TokenService tokenService;
 
     @Override
     @Transactional(readOnly = true)
@@ -88,6 +91,24 @@ public class UserServiceImpl implements UserService {
         }
         user.setDeleted(true);
         userRepository.save(user);
+    }
+
+    @Override
+    public void changePassword(ChangePasswordRequest request) {
+        User user=entityValidatorUtil.requireUserName(request.getUsername());
+        if (!passwordEncoder.matches(request.getCurrentPassword(),user.getPasswordHash())){
+            throw new AppException(ErrorCode.PASSWORD_INCORRECT);
+        }
+        if(request.getNewPassword().equals(request.getConfirmPassword())){
+            throw new AppException(ErrorCode.PASSWORD_MISMATCH);
+        }
+        user.setPasswordHash(passwordEncoder.encode(request.getNewPassword()));
+        userRepository.save(user);
+
+        tokenService.findByUsername(request.getUsername()).ifPresent(token -> {
+            token.setBlacklisted(true);
+            tokenService.save(token);
+        });
     }
 
 }

@@ -1,13 +1,18 @@
 package com.example.Shoe_shop.controller;
 
+import com.example.Shoe_shop.dto.request.ChangePasswordRequest;
 import com.example.Shoe_shop.dto.response.ApiResponse;
 import com.example.Shoe_shop.dto.request.UserUpdateDTO;
 import com.example.Shoe_shop.dto.response.UserResponse;
+import com.example.Shoe_shop.exception.AppException;
+import com.example.Shoe_shop.exception.ErrorCode;
 import com.example.Shoe_shop.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -47,4 +52,18 @@ public class UserController {
         userService.softDeleteUser(id);
         return new  ApiResponse<>(200,"User deleted successfully", null);
     }
+
+    @PostMapping("/change-password")
+    public ApiResponse<Void> changeUser(@RequestBody @Valid ChangePasswordRequest request,
+                                        @AuthenticationPrincipal UserDetails currentUser){
+        if(!currentUser.getUsername().equals(request.getUsername())) {
+            throw new AppException(ErrorCode.UNAUTHORIZED_ACTION);
+        }
+        userService.changePassword(request);
+        return ApiResponse.<Void>builder()
+                .code(200)
+                .message("Change password successfully")
+                .build();
+    }
+
 }

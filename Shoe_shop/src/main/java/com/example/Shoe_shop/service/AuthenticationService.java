@@ -9,4 +9,5 @@ public interface AuthenticationService {
     AuthenticationResponse login(AuthenticationRequest request);
     AuthenticationResponse refresh(String refreshToken);
     void logout(String tokenValue);
+    void forgotPassword(String email);
 }

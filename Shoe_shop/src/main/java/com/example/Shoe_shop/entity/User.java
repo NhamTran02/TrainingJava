@@ -51,6 +51,12 @@ public class User extends BaseAudit {
     @Column(nullable = false)
     Boolean deleted = false;
 
+    @Column(nullable = false)
+    Boolean verified = false;
+
+    @Column(name = "verification_code")
+    String verificationCode;
+
     @ManyToOne
     @JoinColumn(name = "role_id", nullable = false)
     @JsonBackReference

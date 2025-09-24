@@ -13,7 +13,6 @@ import java.util.Map;
 public interface PaymentService {
     Payment createPayment(Order order, OrderRequest orderRequest);
     String retryVnpayPayment(Long orderId, HttpServletRequest request);
-//    String createVnpayPaymentUrl(Order order, HttpServletRequest request);
     String createVnpayPaymentUrl(Payment payment, HttpServletRequest request);
     VnpayCallbackResponse handleVnpayCallback(Map<String, String> params);
     void cancelExpiredVnpayPayments();

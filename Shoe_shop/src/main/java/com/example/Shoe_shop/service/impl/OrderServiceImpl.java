@@ -47,88 +47,6 @@ public class OrderServiceImpl implements OrderService {
     final PaymentService paymentService;
     final PaymentRepository paymentRepository;
 
-//    @Override
-//    @Transactional
-//    public OrderResponse createOrderFromCart(Long userId, OrderRequest orderRequest,HttpServletRequest request) {
-//        User user=entityValidatorUtil.requireUser(userId);
-//        Long cartId= cartJdbcRepository.getCartIdByUserId(user.getId());
-//
-//        List<CartItemResponse> cartItems = cartJdbcRepository.findCartItems(cartId)
-//                .stream()
-//                .filter(CartItemResponse::getSelected)
-//                .toList();
-//        if (cartItems.isEmpty()) {
-//            throw new AppException(ErrorCode.CART_EMPTY);
-//        }
-//        ShippingMethod shippingMethod=entityValidatorUtil.requireShipping(orderRequest.getShippingMethod().getId());
-//
-//        String trackingNumber=trackingNumberUtil.generateUnique();
-//
-//        Order order=orderMapper.toEntity(orderRequest);
-//        order.setUser(user);
-//        order.setShippingMethod(shippingMethod);
-//        order.setTrackingNumber(trackingNumber);
-//        order.setShippingFee(shippingMethod.getFee());
-//        order.setOrderDetails(new ArrayList<>());
-//
-//        BigDecimal totalAmount=BigDecimal.ZERO;
-//        BigDecimal totalCost=BigDecimal.ZERO;
-//        for (CartItemResponse item : cartItems) {
-//            totalAmount=totalAmount.add(item.getUnitPrice().multiply(new BigDecimal(item.getQuantity())));
-//
-//            ProductVariant variant=entityValidatorUtil.requireProductVariant(item.getVariantId());
-//
-//            int quantityToSell=item.getQuantity();
-//            List<PurchaseOrderItem> fifoItems=purchaseOrderItemRepository.findAllByVariantId(item.getVariantId(),0);
-//
-//            if (fifoItems.isEmpty()){
-//                throw new AppException(ErrorCode.OUT_OF_STOCK);
-//            }
-//
-//            for (PurchaseOrderItem poItem : fifoItems) {
-//                if (quantityToSell <= 0) break;
-//
-//                int sellQty = Math.min(quantityToSell, poItem.getRemainingQty());
-//                totalCost = totalCost.add(poItem.getUnitCost().multiply(BigDecimal.valueOf(sellQty)));
-//
-//                // Tạo OrderDetail
-//                OrderDetail detail = OrderDetail.builder()
-//                        .order(order)
-//                        .variant(variant)
-//                        .quantity(sellQty)
-//                        .unitPrice(item.getUnitPrice())
-//                        .unitCost(poItem.getUnitCost())
-//                        .build();
-//                order.getOrderDetails().add(detail);
-//
-//                // Cập nhật remainingQty
-//                poItem.setRemainingQty(poItem.getRemainingQty() - sellQty);
-//                purchaseOrderItemRepository.save(poItem);
-//
-//                quantityToSell -= sellQty;
-//            }
-//            if (quantityToSell > 0) {
-//                throw new AppException(ErrorCode.OUT_OF_STOCK);
-//            }
-//            // Xoá item khỏi cart
-//            cartJdbcRepository.removeItem(cartId, item.getVariantId());
-//        }
-//
-//        order.setTotalAmount(totalAmount.add(order.getShippingFee()));
-//        order.setTotalCost(totalCost);
-//
-//        Order savedOrder = orderRepository.save(order);
-//        paymentService.createPayment(order, orderRequest);
-//
-//        OrderResponse response=orderMapper.toResponse(savedOrder);
-//        if (orderRequest.getPaymentMethod()==PaymentMethod.VNPAY){
-//            String payUrl=paymentService.createVnpayPaymentUrl(savedOrder,request);
-//            response.setPaymentUrl(payUrl);
-//        }
-//        response.setTrackingNumber(trackingNumber);
-//        return response;
-//    }
-
     @Override
     @Transactional
     public OrderResponse createOrderFromCart(Long userId, OrderRequest orderRequest, HttpServletRequest request) {
@@ -202,13 +120,12 @@ public class OrderServiceImpl implements OrderService {
 
         Order savedOrder = orderRepository.save(order);
 
-        // Tạo Payment mới ngay cho VNPAY
         Payment payment = Payment.builder()
                 .order(savedOrder)
                 .paymentMethod(orderRequest.getPaymentMethod())
                 .amount(savedOrder.getTotalAmount())
                 .currency("VND")
-                .txnRef(trackingNumberUtil.generateUnique()) // Payment riêng, khác trackingNumber order
+                .txnRef(trackingNumberUtil.generateUnique())
                 .status(PaymentStatus.PENDING)
                 .note("Payment for order: " + savedOrder.getTrackingNumber())
                 .build();
@@ -307,7 +224,6 @@ public class OrderServiceImpl implements OrderService {
         if (!CheckRole.isAdmin() && !order.getUser().getUsername().equals(username)) {
             throw new AppException(ErrorCode.FORBIDDEN);
         }
-
         // Nếu đã CANCELLED → trả thông báo, không làm lại
         if (order.getStatus() == OrderStatus.CANCELLED) {
             return CancelOrderResponse.builder()
@@ -316,7 +232,6 @@ public class OrderServiceImpl implements OrderService {
                     .refundSuccess(false)
                     .build();
         }
-
         // Lấy payment mới nhất
         Payment lastPayment = order.getPayments().stream()
                 .max(Comparator.comparing(Payment::getCreatedAt))

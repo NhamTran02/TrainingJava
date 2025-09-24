@@ -19,6 +19,17 @@ spring:
       max-file-size: 20MB
       max-request-size: 50MB
       enabled: true
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: nhamtran2k2@gmail.com
+    password: auxh umvj ejak lawf
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 
 
 server:
@@ -39,9 +50,9 @@ app:
 vnpay:
   tmnCode: MVX1TM4Y
   secretKey: A0MNUDBXHIO4X5XOCDGPQBMSG8A6K42B
-  paymentUrl: https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
+  paymentUrl: https://sandbox.vnpayment.vn/paymentv2/vpcpay.html?
   returnUrl: https://8080/api/vnpay/vnpay-callback
-  query-url: https://sandbox.vnpayment.vn/merchant_webapi/api/transaction
+  query-url: https://sandbox.vnpayment.vn/merchant_webapi/api/transaction?
   ipnUrl: https://sandbox.vnpayment.vn/vnpaygw-sit-testing/user/login
   version: 2.1.0
 

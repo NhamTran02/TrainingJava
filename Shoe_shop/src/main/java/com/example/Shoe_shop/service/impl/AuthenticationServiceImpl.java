@@ -9,6 +9,7 @@ import com.example.Shoe_shop.exception.AppException;
 import com.example.Shoe_shop.exception.ErrorCode;
 import com.example.Shoe_shop.repository.UserRepository;
 import com.example.Shoe_shop.service.AuthenticationService;
+import com.example.Shoe_shop.service.EmailService;
 import com.example.Shoe_shop.service.JwtService;
 import com.example.Shoe_shop.service.TokenService;
 import com.example.Shoe_shop.utils.EntityValidatorUtil;
@@ -21,6 +22,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE,makeFinal = true)
@@ -31,10 +34,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     PasswordEncoder passwordEncoder;
     UserRepository userRepository;
     EntityValidatorUtil entityValidatorUtil;
+    EmailService emailService;
 
 
     @Override
-    @Transactional(readOnly = true)
     public void register(RegisterRequest request) {
         if (userRepository.findByUsername(request.getUsername()).isPresent()) {
             throw new AppException(ErrorCode.USER_EXISTED);
@@ -47,6 +50,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
 
         Role role = entityValidatorUtil.requireRole(request.getRoleId());
+        String verificationCode= UUID.randomUUID().toString();
 
         User user = User.builder()
                 .username(request.getUsername())
@@ -56,14 +60,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .phoneNumber(request.getPhoneNumber())
                 .address(request.getAddress())
                 .role(role)
+                .verified(false)
+                .verificationCode(verificationCode)
                 .deleted(false)
                 .build();
 
-        User savedUser = userRepository.save(user);
-
-        AuthenticationResponse.builder()
-                .userId(savedUser.getId())
-                .build();
+        userRepository.save(user);
+        //gửi mail xác minh email
+        emailService.sendVerificationEmail(user.getEmail(), verificationCode);
     }
 
     @Override
@@ -75,6 +79,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         );
 
         User user=entityValidatorUtil.requireUserName(req.getUsername());
+        if(!Boolean.TRUE.equals(user.getVerified())) {
+            throw new AppException(ErrorCode.USER_NOT_VERIFIED);
+        }
 
         String access = jwtService.generateAccessToken(user);
         String refresh = jwtService.generateRefreshToken(user);
@@ -140,6 +147,17 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         tokenService.findByAccessToken(tokenValue).ifPresent(token -> {
             token.setBlacklisted(true);
             tokenService.save(token);
+        });
+    }
+
+    @Override
+    public void forgotPassword(String email) {
+        userRepository.findByEmail(email).ifPresent(user -> {
+            String tempPassword = UUID.randomUUID().toString().substring(0, 8);
+            user.setPasswordHash(passwordEncoder.encode(tempPassword));
+            userRepository.save(user);
+
+            emailService.sendTemporaryPassword(user.getEmail(), tempPassword);
         });
     }
 }

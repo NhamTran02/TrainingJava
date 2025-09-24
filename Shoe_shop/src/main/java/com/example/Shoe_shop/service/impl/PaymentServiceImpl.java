@@ -62,6 +62,10 @@ public class PaymentServiceImpl implements PaymentService {
     String tmnCode;
     @Value("${vnpay.secretKey}")
     String vnpay_secretKey;
+    @Value("${vnpay.paymentUrl}")
+    String vnpay_paymentUrl;
+    @Value("${vnpay.query-url}")
+    String vnpay_queryUrl;
 
     @Override
     @Transactional
@@ -167,7 +171,7 @@ public class PaymentServiceImpl implements PaymentService {
             String queryUrl = query.toString();
             String vnp_SecureHash = hmacSHA512(vnpay_secretKey, hashData.toString());
             queryUrl += "&vnp_SecureHash=" + vnp_SecureHash;
-            return "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html?" + queryUrl;
+            return vnpay_paymentUrl + queryUrl;
         } catch (Exception e) {
             throw new RuntimeException("Lỗi tạo URL VNPAY", e);
         }
@@ -323,8 +327,7 @@ public class PaymentServiceImpl implements PaymentService {
         params.put("vnp_SecureHash", secureHash);
 
         // Gửi HTTP GET đến VNPAY query API
-        String queryUrl = "https://sandbox.vnpayment.vn/merchant_webapi/api/transaction?"
-                + params.entrySet().stream()
+        String queryUrl = vnpay_queryUrl + params.entrySet().stream()
                 .map(e -> URLEncoder.encode(e.getKey(), StandardCharsets.UTF_8) + "="
                         + URLEncoder.encode(e.getValue(), StandardCharsets.UTF_8))
                 .collect(Collectors.joining("&"));
@@ -476,7 +479,6 @@ public class PaymentServiceImpl implements PaymentService {
             // Jackson sẽ tự map các field nhờ @JsonProperty trong VnpayQueryResponse
             return mapper.readValue(body, VnpayQueryResponse.class);
         } catch (Exception e) {
-            // Nên log hoặc wrap exception để dễ debug
             throw new RuntimeException("Lỗi parse phản hồi VNPAY: " + e.getMessage(), e);
         }
     }
@@ -528,7 +530,6 @@ public class PaymentServiceImpl implements PaymentService {
         for (String fieldName : fieldNames) {
             String fieldValue = params.get(fieldName);
             if (fieldValue == null || fieldValue.isEmpty()) continue;
-            // Dùng UTF-8 để encode giá trị (và giữ '+' do URLEncoder)
             String encodedValue = URLEncoder.encode(fieldValue, StandardCharsets.UTF_8);
             if (!first) {
                 hashData.append('&');

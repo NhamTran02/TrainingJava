@@ -69,6 +69,11 @@ public enum ErrorCode {
     PAYMENT_CANNOT_REFUND(400,"Payment can not be refunded"),
     PAYMENT_METHOD_NOT_SUPPORT_REFUND(400,"Payment method not support refund"),
     REFUND_FAILED(400, "Hoàn tiền thất bại, vui lòng thử lại"),
+    USER_NOT_VERIFIED(400,"User not verified"),
+    VERIFYCODE_NOT_FOUND(404,"Verification code not found"),
+    PASSWORD_INCORRECT(400,"Password incorrect"),
+    PASSWORD_MISMATCH(400,"Password mismatch"),
+    UNAUTHORIZED_ACTION(400,"Bạn không thể đổi mật khẩu của user khác")
     ;
 
     private final int code;

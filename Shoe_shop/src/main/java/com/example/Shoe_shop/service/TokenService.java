@@ -10,8 +10,6 @@ public interface TokenService {
     Optional<Token> findByRefreshToken(String refreshToken);
     Optional<Token> findByAccessToken(String accessToken);
     Optional<Token> findByUsername(String username);
-
     void blacklist(Token token);
-
     void blacklistAllByUsername(String username);
 }
