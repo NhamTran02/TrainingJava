@@ -7,6 +7,7 @@ import com.example.Shoe_shop.exception.AppException;
 import com.example.Shoe_shop.exception.ErrorCode;
 import com.example.Shoe_shop.mapper.OrderMapper;
 import com.example.Shoe_shop.repository.*;
+import com.example.Shoe_shop.service.EmailService;
 import com.example.Shoe_shop.service.OrderService;
 import com.example.Shoe_shop.service.PaymentService;
 import com.example.Shoe_shop.utils.CheckRole;
@@ -15,6 +16,7 @@ import com.example.Shoe_shop.utils.TrackingNumberUtil;
 import com.example.Shoe_shop.utils.enums.OrderStatus;
 import com.example.Shoe_shop.utils.enums.PaymentMethod;
 import com.example.Shoe_shop.utils.enums.PaymentStatus;
+import com.example.Shoe_shop.utils.enums.ShippingType;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -45,7 +47,8 @@ public class OrderServiceImpl implements OrderService {
     final TrackingNumberUtil  trackingNumberUtil;
     final OrderMapper orderMapper;
     final PaymentService paymentService;
-    final PaymentRepository paymentRepository;
+    final EmailService emailService;
+    final ShippingMethodRepository shippingMethodRepository;
 
     @Override
     @Transactional
@@ -62,14 +65,17 @@ public class OrderServiceImpl implements OrderService {
             throw new AppException(ErrorCode.CART_EMPTY);
         }
 
-        ShippingMethod shippingMethod = entityValidatorUtil.requireShipping(orderRequest.getShippingMethod().getId());
+        ShippingType shippingType= orderRequest.getShippingType();
+        BigDecimal shippingFee= shippingType.getFee();
+        ShippingMethod shippingMethod = shippingMethodRepository.findByMethodName(shippingType)
+                .orElseThrow(() -> new AppException(ErrorCode.SHIPPING_METHOD_NOT_FOUND));
         String trackingNumber = trackingNumberUtil.generateUnique();
 
         Order order = orderMapper.toEntity(orderRequest);
         order.setUser(user);
         order.setShippingMethod(shippingMethod);
         order.setTrackingNumber(trackingNumber);
-        order.setShippingFee(shippingMethod.getFee());
+        order.setShippingFee(shippingFee);
         order.setOrderDetails(new ArrayList<>());
 
         BigDecimal totalAmount = BigDecimal.ZERO;
@@ -117,28 +123,15 @@ public class OrderServiceImpl implements OrderService {
 
         order.setTotalAmount(totalAmount.add(order.getShippingFee()));
         order.setTotalCost(totalCost);
-
         Order savedOrder = orderRepository.save(order);
-
-        Payment payment = Payment.builder()
-                .order(savedOrder)
-                .paymentMethod(orderRequest.getPaymentMethod())
-                .amount(savedOrder.getTotalAmount())
-                .currency("VND")
-                .txnRef(trackingNumberUtil.generateUnique())
-                .status(PaymentStatus.PENDING)
-                .note("Payment for order: " + savedOrder.getTrackingNumber())
-                .build();
-        paymentRepository.save(payment);
-
+        Payment payment=paymentService.createPayment(savedOrder, orderRequest);
         OrderResponse response = orderMapper.toResponse(savedOrder);
-
         if (orderRequest.getPaymentMethod() == PaymentMethod.VNPAY) {
             String payUrl = paymentService.createVnpayPaymentUrl(payment, request);
             response.setPaymentUrl(payUrl);
         }
-
         response.setTrackingNumber(trackingNumber);
+        emailService.sendOrderConfirmation(order);
         return response;
     }
 
@@ -220,11 +213,10 @@ public class OrderServiceImpl implements OrderService {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName();
 
-        // Kiểm tra quyền
         if (!CheckRole.isAdmin() && !order.getUser().getUsername().equals(username)) {
             throw new AppException(ErrorCode.FORBIDDEN);
         }
-        // Nếu đã CANCELLED → trả thông báo, không làm lại
+
         if (order.getStatus() == OrderStatus.CANCELLED) {
             return CancelOrderResponse.builder()
                     .orderId(orderId)
@@ -270,7 +262,7 @@ public class OrderServiceImpl implements OrderService {
                 throw new AppException(ErrorCode.ORDER_BY_VNPAY_CANNOT_BE_CANCELLED);
             }
 
-            // Nếu thanh toán thành công → gọi refund
+            // Nếu thanh toán thành công, gọi refund
             if (lastPayment != null && lastPayment.getStatus() == PaymentStatus.SUCCESS) {
                 RefundResult refundResponse = paymentService.refundPayment(lastPayment.getId());
                 if (refundResponse.getRefundStatus() != PaymentStatus.REFUNDED) {
@@ -286,7 +278,7 @@ public class OrderServiceImpl implements OrderService {
                         ? refundResponse.getRefundDate().toString()
                         : null;
             }
-            // Sau khi refund xong → đổi trạng thái
+            // Sau khi refund, đổi trạng thái
             order.setStatus(OrderStatus.CANCELLED);
             orderRepository.save(order);
 
@@ -302,11 +294,8 @@ public class OrderServiceImpl implements OrderService {
                     .refundTime(refundTime)
                     .build();
         }
-
-        // Phương thức thanh toán không hỗ trợ hủy
         throw new AppException(ErrorCode.ORDER_CANNOT_BE_CANCELLED);
     }
-
 
     private boolean isValidStatusTransition(OrderStatus current, OrderStatus next) {
         return switch (current) {

@@ -11,6 +11,7 @@ import com.example.Shoe_shop.exception.AppException;
 import com.example.Shoe_shop.exception.ErrorCode;
 import com.example.Shoe_shop.repository.OrderRepository;
 import com.example.Shoe_shop.repository.PaymentRepository;
+import com.example.Shoe_shop.service.EmailService;
 import com.example.Shoe_shop.service.PaymentService;
 import com.example.Shoe_shop.utils.TrackingNumberUtil;
 import com.example.Shoe_shop.utils.enums.OrderStatus;
@@ -55,6 +56,7 @@ public class PaymentServiceImpl implements PaymentService {
     final OrderRepository orderRepository;
     final TrackingNumberUtil trackingNumberUtil;
     final VnpayClient vnpayClient;
+    final EmailService emailService;
     // Bộ nhớ tạm đếm số lần query
     private final Map<String, Integer> queryAttemptMap = new ConcurrentHashMap<>();
 
@@ -470,6 +472,30 @@ public class PaymentServiceImpl implements PaymentService {
 
         } catch (Exception ex) {
             throw new RuntimeException("Refund payment failed: " + ex.getMessage(), ex);
+        }
+    }
+
+    @Override
+    @Transactional
+    public void sendReminderForNearlyExpiredPayments() {
+        LocalDateTime now =LocalDateTime.now();
+        LocalDateTime from=now.minusHours(21);
+        LocalDateTime to= now.minusHours(20);
+
+        List<Payment> payments= paymentRepository.findPendingNearlyExpired(
+                PaymentStatus.PENDING,
+                PaymentMethod.VNPAY,
+                from,
+                to
+        );
+        for (Payment payment:payments){
+            try {
+                emailService.sendReminderEmail(
+                        payment.getOrder().getUser().getEmail(),
+                        payment.getOrder().getTrackingNumber());
+            } catch (Exception e) {
+                log.error("Failed to send reminder for txnRef={} : {}", payment.getTxnRef(), e.getMessage(), e);
+            }
         }
     }
 

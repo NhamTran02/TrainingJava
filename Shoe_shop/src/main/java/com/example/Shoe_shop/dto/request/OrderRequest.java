@@ -2,6 +2,7 @@ package com.example.Shoe_shop.dto.request;
 
 import com.example.Shoe_shop.entity.ShippingMethod;
 import com.example.Shoe_shop.utils.enums.PaymentMethod;
+import com.example.Shoe_shop.utils.enums.ShippingType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -22,5 +23,5 @@ public class OrderRequest {
     PaymentMethod paymentMethod;
 
     @NotNull(message = "SHIPPING_METHOD_REQUIRED")
-    ShippingMethod shippingMethod;
+    ShippingType shippingType;
 }

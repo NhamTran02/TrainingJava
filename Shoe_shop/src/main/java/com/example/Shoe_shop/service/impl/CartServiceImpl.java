@@ -66,7 +66,7 @@ public class CartServiceImpl implements CartService {
     @Override
     public void toggleSelected(Long userId, Long variantId, boolean selected) {
         Long cartId = cartJdbcRepository.getCartIdByUserId(userId);
-        cartJdbcRepository.updateSelected(cartId, variantId, selected);
+        cartJdbcRepository.toggleSelectedItem(cartId, variantId, selected);
     }
 
     @Override
@@ -93,7 +93,7 @@ public class CartServiceImpl implements CartService {
     public CartResponse clearCart(Long cartId) {
         cartJdbcRepository.removeCart(cartId);
         List<CartItemResponse> itemResponses=cartJdbcRepository.findCartItems(cartId);
-        BigDecimal totalPrice=cartJdbcRepository.getCartTotal(cartId);
+        BigDecimal totalPrice=BigDecimal.ZERO;
         return new  CartResponse(cartId,itemResponses,totalPrice);
     }
 

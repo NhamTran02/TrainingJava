@@ -29,7 +29,6 @@ public class VnpayQueryResponse {
 
     // helper
     public boolean isSuccess() {
-        // theo tài liệu: kết quả giao dịch (thành công) thường tương ứng transaction status = "00"
         return "00".equals(vnpResponseCode) && "00".equals(vnpTransactionStatus);
     }
 

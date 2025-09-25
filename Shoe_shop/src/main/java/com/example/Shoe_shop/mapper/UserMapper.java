@@ -17,9 +17,9 @@ public interface UserMapper {
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "passwordHash", ignore = true)
-    @Mapping(target = "role", ignore = true)
+    @Mapping(target = "roles", ignore = true)
     void updateUserFromDtoExcludingSensitive(UserUpdateDTO dto, @MappingTarget User user);
 
-    @Mapping(source = "role.roleName", target = "roleName")
+    @Mapping(target = "roleNames", expression = "java(user.getRoles().stream().map(role -> role.getRoleName().name()).toList())")
     UserResponse toUserResponse(User user);
 }

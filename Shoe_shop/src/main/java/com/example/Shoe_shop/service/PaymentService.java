@@ -19,4 +19,5 @@ public interface PaymentService {
     void reconcilePendingVnpayPayments();
     VnpayQueryResponse manualCheckVnpayPayment(Long orderId);
     RefundResult refundPayment(Long paymentId);
+    void sendReminderForNearlyExpiredPayments();
 }

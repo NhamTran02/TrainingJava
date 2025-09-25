@@ -1,205 +1,265 @@
--- - 1–N: roles → users, categories → products, brands → products, products → variants/images/reviews.
--- - N–N (thông qua bảng trung gian):
--- products ↔ users (wishlists),
--- products ↔ users (reviews),
--- products ↔ orders (order_details),
--- products ↔ purchase_orders (purchase_order_items).
-
 CREATE DATABASE Shoe_Ecommerce;
 USE Shoe_Ecommerce;
+CREATE TABLE `brands` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`)
+) 
 
+
+CREATE TABLE `cart_items` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `cart_id` int NOT NULL,
+  `variant_id` int NOT NULL,
+  `quantity` int NOT NULL,
+  `selected` tinyint(1) DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `idx_cart_items_cart_id` (`cart_id`),
+  KEY `idx_cart_items_variant_id` (`variant_id`),
+  CONSTRAINT `cart_items_ibfk_1` FOREIGN KEY (`cart_id`) REFERENCES `carts` (`id`),
+  CONSTRAINT `cart_items_ibfk_2` FOREIGN KEY (`variant_id`) REFERENCES `product_variants` (`id`)
+) 
+CREATE TABLE `carts` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `user_id` (`user_id`),
+  CONSTRAINT `carts_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+) 
+CREATE TABLE `categories` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`)
+) 
+CREATE TABLE `order_details` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `order_id` int NOT NULL,
+  `variant_id` int NOT NULL,
+  `quantity` int NOT NULL,
+  `unit_price` decimal(38,2) NOT NULL,
+  `unit_cost` decimal(38,2) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_order_details_order_id` (`order_id`),
+  KEY `idx_order_details_variant_id` (`variant_id`),
+  CONSTRAINT `order_details_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`),
+  CONSTRAINT `order_details_ibfk_2` FOREIGN KEY (`variant_id`) REFERENCES `product_variants` (`id`)
+) 
+CREATE TABLE `orders` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int NOT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `total_amount` decimal(38,2) NOT NULL,
+  `total_cost` decimal(38,2) NOT NULL,
+  `status` enum('PENDING','PROCESSING','ON_DELIVERY','DELIVERED','CANCELLED') DEFAULT 'PENDING',
+  `shipping_method_id` int DEFAULT NULL,
+  `shipping_address` varchar(255) NOT NULL,
+  `note` varchar(255) DEFAULT NULL,
+  `tracking_number` varchar(100) DEFAULT NULL,
+  `shipping_fee` decimal(38,2) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `idx_tracking_number` (`tracking_number`)
+) 
+CREATE TABLE `payments` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `order_id` int NOT NULL,
+  `payment_method` varchar(50) NOT NULL,
+  `amount` decimal(12,2) NOT NULL,
+  `currency` varchar(3) DEFAULT 'VND',
+  `status` enum('PENDING','SUCCESS','FAILED','REFUNDED') DEFAULT 'PENDING',
+  `txn_ref` varchar(100) DEFAULT NULL,
+  `response_code` varchar(10) DEFAULT NULL,
+  `pay_date` timestamp NULL DEFAULT NULL,
+  `note` text,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `transaction_no` varchar(50) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `txn_ref` (`txn_ref`),
+  UNIQUE KEY `transaction_no` (`transaction_no`),
+  KEY `order_id` (`order_id`),
+  CONSTRAINT `payments_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`) ON DELETE CASCADE
+) 
+CREATE TABLE `product_images` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `product_id` int NOT NULL,
+  `image_url` varchar(255) NOT NULL,
+  `is_thumbnail` tinyint(1) DEFAULT '0',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `product_images_ibfk_1` (`product_id`),
+  CONSTRAINT `product_images_ibfk_1` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`)
+) 
+CREATE TABLE `product_variants` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `product_id` int NOT NULL,
+  `size` varchar(255) NOT NULL,
+  `color` varchar(255) NOT NULL,
+  `regular_price` decimal(38,2) NOT NULL,
+  `sale_price` decimal(38,2) DEFAULT NULL,
+  `stock_quantity` int NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `idx_product_variants_product_price` (`product_id`,`sale_price`),
+  CONSTRAINT `product_variants_ibfk_1` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`)
+) 
+CREATE TABLE `products` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `description` varchar(255) DEFAULT NULL,
+  `brand_id` int DEFAULT NULL,
+  `category_id` int DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `deleted` tinyint(1) DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `products_ibfk_1` (`brand_id`),
+  KEY `products_ibfk_2` (`category_id`),
+  CONSTRAINT `products_ibfk_1` FOREIGN KEY (`brand_id`) REFERENCES `brands` (`id`),
+  CONSTRAINT `products_ibfk_2` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`)
+) 
+CREATE TABLE `purchase_order_items` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `purchase_order_id` int NOT NULL,
+  `variant_id` int NOT NULL,
+  `quantity` int NOT NULL,
+  `unit_cost` decimal(38,2) NOT NULL,
+  `remaining_qty` int NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `idx_purchase_order_items_purchase_order_id` (`purchase_order_id`),
+  KEY `idx_purchase_order_items_variant_id` (`variant_id`),
+  CONSTRAINT `purchase_order_items_ibfk_1` FOREIGN KEY (`purchase_order_id`) REFERENCES `purchase_orders` (`id`),
+  CONSTRAINT `purchase_order_items_ibfk_2` FOREIGN KEY (`variant_id`) REFERENCES `product_variants` (`id`)
+) 
+CREATE TABLE `purchase_orders` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `supplier_name` varchar(255) DEFAULT NULL,
+  `order_date` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `total_cost` decimal(38,2) NOT NULL,
+  PRIMARY KEY (`id`)
+) 
+CREATE TABLE `reviews` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `user_id` int NOT NULL,
+  `product_id` int NOT NULL,
+  `order_id` int NOT NULL,
+  `rating` int DEFAULT NULL,
+  `comment` varchar(255) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `is_edited` tinyint(1) DEFAULT '0',
+  `edit_count` int DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `idx_reviews_product_id` (`product_id`),
+  KEY `idx_reviews_user_id` (`user_id`),
+  KEY `idx_reviews_order_id` (`order_id`),
+  CONSTRAINT `reviews_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
+  CONSTRAINT `reviews_ibfk_2` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`),
+  CONSTRAINT `reviews_ibfk_3` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`),
+  CONSTRAINT `reviews_chk_1` CHECK ((`rating` between 1 and 5))
+) 
 CREATE TABLE roles (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    role_name VARCHAR(50) UNIQUE NOT NULL
+  id INT NOT NULL AUTO_INCREMENT,
+  role_name VARCHAR(50) NOT NULL,
+  PRIMARY KEY (id)
 );
 
-CREATE TABLE categories (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    name VARCHAR(100) NOT NULL
-);
+CREATE TABLE `shipping_methods` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `method_name` varchar(100) NOT NULL,
+  `fee` decimal(38,2) NOT NULL,
+  PRIMARY KEY (`id`)
+); 
 
-CREATE TABLE brands (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    name VARCHAR(100) NOT NULL
-);
-
-CREATE TABLE shipping_methods (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    method_name VARCHAR(100) NOT NULL,
-    fee DECIMAL(10,2) NOT NULL
-);
-
+CREATE TABLE `tokens` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `username` varchar(255) NOT NULL,
+  `access_token` varchar(255) DEFAULT NULL,
+  `refresh_token` varchar(255) DEFAULT NULL,
+  `blacklisted` tinyint(1) DEFAULT '0',
+  PRIMARY KEY (`id`)
+); 
 CREATE TABLE users (
-    id INT PRIMARY KEY AUTO_INCREMENT,
+  id INT NOT NULL AUTO_INCREMENT,
+  username VARCHAR(50) NOT NULL,
+  email VARCHAR(255) NOT NULL,
+  password_hash VARCHAR(255) NOT NULL,
+  full_name VARCHAR(255) NOT NULL,
+  phone_number VARCHAR(255) NOT NULL,
+  address VARCHAR(255) NOT NULL,
+  created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  deleted TINYINT(1) DEFAULT 0,
+  verified TINYINT(1) DEFAULT 0,
+  verification_code VARCHAR(100) DEFAULT NULL,
+  PRIMARY KEY (id)
+);
+
+CREATE TABLE user_roles (
+    user_id INT NOT NULL,
     role_id INT NOT NULL,
-    username VARCHAR(100) UNIQUE NOT NULL,
-    email VARCHAR(100) UNIQUE NOT NULL,
-    password_hash VARCHAR(255) NOT NULL,
-    full_name VARCHAR(150) NOT NULL,
-    phone_number VARCHAR(20) NOT NULL,
-    address TEXT NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    deleted BOOLEAN DEFAULT FALSE,
-    FOREIGN KEY (role_id) REFERENCES roles(id)
+    PRIMARY KEY (user_id, role_id),
+    CONSTRAINT fk_user_roles_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    CONSTRAINT fk_user_roles_role FOREIGN KEY (role_id) REFERENCES roles(id) ON DELETE CASCADE
 );
 
-CREATE TABLE products (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    name VARCHAR(255) NOT NULL,
-    description TEXT,
-    brand_id INT,
-    category_id INT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    deleted BOOLEAN DEFAULT FALSE,
-    FOREIGN KEY (brand_id) REFERENCES brands(id),
-    FOREIGN KEY (category_id) REFERENCES categories(id)
-);
+CREATE TABLE `wishlists` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `user_id` int NOT NULL,
+  `product_id` int NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `user_id` (`user_id`,`product_id`),
+  KEY `wishlists_ibfk_2` (`product_id`),
+  CONSTRAINT `wishlists_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
+  CONSTRAINT `wishlists_ibfk_2` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`)
+) 
 
-CREATE TABLE product_variants (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    product_id INT NOT NULL,
-    size VARCHAR(10) NOT NULL,
-    color VARCHAR(50) NOT NULL,
-    regular_price DECIMAL(10,2) NOT NULL,
-    sale_price DECIMAL(10,2),
-    stock_quantity INT NOT NULL DEFAULT 0,
-    UNIQUE(product_id, size, color),
-    FOREIGN KEY (product_id) REFERENCES products(id)
-);
+DELIMITER ;;
+CREATE PROCEDURE `DecreaseStock`(IN orderId INT)
+BEGIN
+    UPDATE product_variants pv
+    JOIN order_details od ON pv.id = od.variant_id
+    SET pv.stock_quantity = pv.stock_quantity - od.quantity
+    WHERE od.order_id = orderId;
+END ;;
+DELIMITER ;
 
-CREATE TABLE product_images (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    product_id INT NOT NULL,
-    image_url VARCHAR(255) NOT NULL,
-    is_thumbnail BOOLEAN DEFAULT FALSE, -- Có phải ảnh chính (thumbnail) không
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (product_id) REFERENCES products(id)
-);
+DELIMITER ;;
+CREATE PROCEDURE `GetCartTotal`(IN cartId BIGINT)
+BEGIN
+    SELECT COALESCE(SUM(ci.quantity * COALESCE(v.sale_price, v.regular_price)), 0) AS total
+    FROM cart_items ci
+    JOIN product_variants v ON ci.variant_id = v.id
+    WHERE ci.cart_id = cartId
+      AND ci.selected = TRUE;
+END ;;
+DELIMITER ;
 
-CREATE TABLE purchase_orders (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    supplier_name VARCHAR(150),
-    order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    total_cost DECIMAL(12,2)
-);
+DELIMITER ;;
+CREATE PROCEDURE `GetProductReviews`(IN productId INT)
+BEGIN
+    SELECT r.id, r.rating, r.comment, r.created_at, u.username
+    FROM reviews r
+    JOIN users u ON r.user_id = u.id
+    WHERE r.product_id = productId
+    ORDER BY r.created_at DESC;
+END ;;
+DELIMITER ;
 
-CREATE TABLE purchase_order_items (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    purchase_order_id INT NOT NULL,
-    variant_id INT NOT NULL,
-    quantity INT NOT NULL,
-    unit_cost DECIMAL(10,2) NOT NULL,
-    FOREIGN KEY (purchase_order_id) REFERENCES purchase_orders(id),
-    FOREIGN KEY (variant_id) REFERENCES product_variants(id)
-);
-
-CREATE TABLE carts (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    user_id INT UNIQUE NOT NULL,
-    voucher_id INT,
-    FOREIGN KEY (user_id) REFERENCES users(id)
-);
-
-CREATE TABLE cart_items (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    cart_id INT NOT NULL,
-    variant_id INT NOT NULL,
-    quantity INT NOT NULL,
-    unit_price DECIMAL(10,2) NOT NULL,
-    FOREIGN KEY (cart_id) REFERENCES carts(id),
-    FOREIGN KEY (variant_id) REFERENCES product_variants(id)
-);
-
-CREATE TABLE wishlists (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    user_id INT NOT NULL,
-    product_id INT NOT NULL,
-    UNIQUE(user_id, product_id),
-    FOREIGN KEY (user_id) REFERENCES users(id),
-    FOREIGN KEY (product_id) REFERENCES products(id)
-);
-
-CREATE TABLE orders (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    user_id INT NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    total_amount DECIMAL(12,2) NOT NULL,
-    total_cost DECIMAL(12,2) NOT NULL,
-    status ENUM('pending','processing','shipped','delivered','cancelled') DEFAULT 'pending',
-    payment_method VARCHAR(50) NOT NULL,
-    shipping_method_id INT,
-    shipping_address TEXT,
-    note TEXT,
-    tracking_number VARCHAR(100),
-    shipping_fee DECIMAL(10,2) DEFAULT 0,
-    FOREIGN KEY (user_id) REFERENCES users(id),
-    FOREIGN KEY (shipping_method_id) REFERENCES shipping_methods(id)
-);
-
-CREATE TABLE order_details (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    order_id INT NOT NULL,
-    variant_id INT NOT NULL,
-    quantity INT NOT NULL,
-    unit_price DECIMAL(10,2) NOT NULL,
-    unit_cost DECIMAL(10,2) NOT NULL,
-    FOREIGN KEY (order_id) REFERENCES orders(id),
-    FOREIGN KEY (variant_id) REFERENCES product_variants(id)
-);
-
-CREATE TABLE reviews (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    user_id INT NOT NULL,
-    product_id INT NOT NULL,
-    order_id INT NOT NULL,
-    rating INT CHECK(rating BETWEEN 1 AND 5),
-    comment TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    is_edited BOOLEAN DEFAULT FALSE,
-    edit_count INT DEFAULT 0,
-    FOREIGN KEY (user_id) REFERENCES users(id),
-    FOREIGN KEY (product_id) REFERENCES products(id),
-    FOREIGN KEY (order_id) REFERENCES orders(id)
-);
-
-CREATE TABLE tokens (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(255) NOT NULL UNIQUE,
-    access_token TEXT,
-    refresh_token TEXT,
-    blacklisted BOOLEAN DEFAULT FALSE
-);
+DELIMITER ;;
+CREATE PROCEDURE `GetUserOrders`(IN userId INT)
+BEGIN
+    SELECT o.id AS order_id,
+           o.created_at,
+           o.total_amount,
+           o.status
+    FROM orders o
+    WHERE o.user_id = userId
+    ORDER BY o.created_at DESC;
+END ;;
+DELIMITER ;
 
 SHOW INDEX FROM users;
-
-CREATE INDEX idx_users_name ON users(username);
-CREATE INDEX idx_users_phone ON users(phone_number);
-CREATE INDEX idx_products_category ON products(category_id);
-CREATE INDEX idx_products_brand ON products(brand_id);
-CREATE INDEX idx_variants_product ON product_variants(product_id);
-CREATE INDEX idx_images_product ON product_images(product_id);
-CREATE INDEX idx_poi_order ON purchase_order_items(purchase_order_id);
-CREATE INDEX idx_poi_variant ON purchase_order_items(variant_id);
-CREATE INDEX idx_cart_items_cart ON cart_items(cart_id);
-CREATE INDEX idx_cart_items_variant ON cart_items(variant_id);
-CREATE INDEX idx_orders_user ON orders(user_id);
-CREATE INDEX idx_orders_status ON orders(status);
-CREATE INDEX idx_orders_shipping ON orders(shipping_method_id);
-CREATE INDEX idx_reviews_user ON reviews(user_id);
-CREATE INDEX idx_reviews_product ON reviews(product_id);
-CREATE INDEX idx_reviews_order ON reviews(order_id);
-CREATE INDEX idx_tokens_refresh ON tokens(refresh_token(100));
-
-
-
-
-
-
 
 
 

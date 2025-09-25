@@ -1,6 +1,7 @@
 package com.example.Shoe_shop.repository;
 
 import com.example.Shoe_shop.entity.Payment;
+import com.example.Shoe_shop.utils.enums.PaymentMethod;
 import com.example.Shoe_shop.utils.enums.PaymentStatus;
 import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -21,6 +22,17 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
     Optional<Payment> findByTxnRefForUpdate(@Param("txnRef") String txnRef);
     List<Payment> findByStatusAndCreatedAtBefore(PaymentStatus status, LocalDateTime before);
     Optional<Payment> findTopByOrder_IdOrderByCreatedAtDesc(Long orderId);
-
+    @Query("SELECT p FROM Payment p " +
+            "WHERE p.status = :status " +
+            "AND p.paymentMethod = :method " +
+            "AND p.createdAt > :from " +
+            "AND p.createdAt <= :to "
+            )
+    List<Payment> findPendingNearlyExpired(
+            @Param("status") PaymentStatus status,
+            @Param("method") PaymentMethod method,
+            @Param("from") LocalDateTime from,
+            @Param("to") LocalDateTime to
+            );
     List<Payment> findByOrOrder_Id(Long orderId);
 }

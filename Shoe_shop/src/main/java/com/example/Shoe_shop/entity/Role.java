@@ -2,7 +2,6 @@ package com.example.Shoe_shop.entity;
 
 import com.example.Shoe_shop.entity.base.BaseId;
 import com.example.Shoe_shop.utils.enums.RoleName;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -20,7 +19,6 @@ public class Role extends BaseId {
     @Column(nullable = false, unique = true,name = "role_name")
     RoleName roleName;
 
-    @OneToMany(mappedBy = "role")
-    @JsonManagedReference
+    @ManyToMany(mappedBy = "roles")
     List<User> users;
 }

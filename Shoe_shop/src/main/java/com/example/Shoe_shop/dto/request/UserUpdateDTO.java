@@ -7,6 +7,8 @@ import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
 
+import java.util.List;
+
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserUpdateDTO {
@@ -24,7 +26,8 @@ public class UserUpdateDTO {
     @Size(min = 6, message = "PASSWORD_INVALID")
     String password;
 
-    Long roleId;
+    List<Long> roleIds;
+
     Boolean deleted;
 
 }

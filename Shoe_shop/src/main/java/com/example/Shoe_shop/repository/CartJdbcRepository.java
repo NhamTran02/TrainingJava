@@ -107,11 +107,14 @@ public class CartJdbcRepository {
         }
     }
 
-    public void updateSelected(Long cartId, Long variantId, boolean selected) {
-        jdbcTemplate.update(
-                "UPDATE cart_items SET selected=? WHERE cart_id=? AND variant_id=?",
-                selected, cartId, variantId
-        );
+    public void toggleSelectedItem(Long cartId, Long variantId, boolean selected) {
+        String checkSql = "SELECT COUNT(*) FROM cart_items WHERE cart_id=? AND variant_id=?";
+        Integer count = jdbcTemplate.queryForObject(checkSql, Integer.class, cartId, variantId);
+        if (count == null || count == 0) {
+            throw new AppException(ErrorCode.CART_ITEM_NOT_FOUND);
+        }
+        String updateSql = "UPDATE cart_items SET selected=? WHERE cart_id=? AND variant_id=?";
+        jdbcTemplate.update(updateSql, selected, cartId, variantId);
     }
 
     public void removeItem(Long cartId, Long variantId){
@@ -119,6 +122,6 @@ public class CartJdbcRepository {
     }
 
     public void removeCart(Long cartId){
-        jdbcTemplate.update("DELETE FROM carts WHERE id=?",cartId);
+        jdbcTemplate.update("DELETE FROM cart_items WHERE cart_id=?",cartId);
     }
 }

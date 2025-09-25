@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
 
+import java.util.List;
+
 @Data
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -16,6 +18,6 @@ public class UserResponse {
     String fullName;
     String phoneNumber;
     String address;
-    String roleName;
+    List<String> roleNames;
     Boolean deleted;
 }

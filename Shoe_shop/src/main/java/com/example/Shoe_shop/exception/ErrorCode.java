@@ -73,7 +73,9 @@ public enum ErrorCode {
     VERIFYCODE_NOT_FOUND(404,"Verification code not found"),
     PASSWORD_INCORRECT(400,"Password incorrect"),
     PASSWORD_MISMATCH(400,"Password mismatch"),
-    UNAUTHORIZED_ACTION(400,"Bạn không thể đổi mật khẩu của user khác")
+    UNAUTHORIZED_ACTION(400,"Bạn không thể đổi mật khẩu của user khác"),
+    SHIPPING_METHOD_NOT_FOUND(404,"Shipping method not found"),
+    CART_ITEM_NOT_FOUND(404,"Item không tồn tại trong giỏ hàng"),
     ;
 
     private final int code;

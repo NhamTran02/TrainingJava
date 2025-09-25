@@ -22,6 +22,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -49,7 +50,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             throw new AppException(ErrorCode.PHONE_NUMBER_EXISTED);
         }
 
-        Role role = entityValidatorUtil.requireRole(request.getRoleId());
+        List<Role> roles=request.getRoleIds().stream()
+                .map(entityValidatorUtil::requireRole)
+                .toList();
         String verificationCode= UUID.randomUUID().toString();
 
         User user = User.builder()
@@ -59,7 +62,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .fullName(request.getFullName())
                 .phoneNumber(request.getPhoneNumber())
                 .address(request.getAddress())
-                .role(role)
+                .roles(roles)
                 .verified(false)
                 .verificationCode(verificationCode)
                 .deleted(false)

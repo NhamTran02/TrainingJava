@@ -72,11 +72,12 @@ public class UserServiceImpl implements UserService {
             if(userUpdateDTO.getPassword()!=null){
                 user.setPasswordHash(passwordEncoder.encode(userUpdateDTO.getPassword()));
             }
-            if(userUpdateDTO.getRoleId()!=null){
-                Role role=entityValidatorUtil.requireRole(userUpdateDTO.getRoleId());
-                user.setRole(role);
+            if(userUpdateDTO.getRoleIds()!=null){
+                List<Role> roles =userUpdateDTO.getRoleIds().stream()
+                        .map(entityValidatorUtil::requireRole)
+                        .toList();
+                user.setRoles(roles);
             }
-
         }
         return userMapper.toUserResponse(userRepository.save(user));
     }
