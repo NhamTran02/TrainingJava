@@ -12,5 +12,4 @@ public abstract class BaseId {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
 }

@@ -31,7 +31,6 @@ public class OrderController {
     public ApiResponse<OrderResponse> createOrder(@PathVariable Long userId, @RequestBody OrderRequest orderRequest, HttpServletRequest request) {
         OrderResponse response=orderService.createOrderFromCart(userId,orderRequest,request);
         return ApiResponse.<OrderResponse>builder()
-                .code(200)
                 .result(response)
                 .message("create order successfully")
                 .build();
@@ -56,7 +55,6 @@ public class OrderController {
     ){
         PagedResponse<OrderResponse> response=orderService.getAllOrder(page,size,sortBy,sortDir);
         return ApiResponse.<PagedResponse<OrderResponse>>builder()
-                .code(200)
                 .result(response)
                 .build();
     }
@@ -83,7 +81,6 @@ public class OrderController {
 
         PagedResponse<OrderResponse> response= orderService.getOrdersbyStatus(userId,orderStatus,pageable);
         return ApiResponse.<PagedResponse<OrderResponse>>builder()
-                .code(200)
                 .result(response)
                 .build();
     }

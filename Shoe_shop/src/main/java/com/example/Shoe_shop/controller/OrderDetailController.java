@@ -24,7 +24,6 @@ public class OrderDetailController {
     public ApiResponse<OrderDetailView> getAllOrderDetail(@PathVariable Long orderId, @PathVariable Long userId){
         OrderDetailView orderDetailView = orderDetailService.getOrderDetail(orderId,userId);
         return ApiResponse.<OrderDetailView>builder()
-                .code(200)
                 .result(orderDetailView)
                 .build();
     }

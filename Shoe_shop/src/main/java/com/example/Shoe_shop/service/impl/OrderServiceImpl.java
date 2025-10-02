@@ -113,7 +113,6 @@ public class OrderServiceImpl implements OrderService {
 
                 quantityToSell -= sellQty;
             }
-
             if (quantityToSell > 0) {
                 throw new AppException(ErrorCode.OUT_OF_STOCK);
             }

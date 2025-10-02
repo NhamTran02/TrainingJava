@@ -1,0 +1,18 @@
+CREATE DATABASE payment_service;
+USE payment_service;
+
+CREATE TABLE payments (
+  id CHAR(36) PRIMARY KEY DEFAULT(uuid()),
+  order_id CHAR(36) NOT NULL,   -- từ Order Service
+  payment_method VARCHAR(50) NOT NULL,
+  amount DECIMAL(12,2) NOT NULL,
+  currency VARCHAR(3) DEFAULT 'VND',
+  status ENUM('PENDING','SUCCESS','FAILED','REFUNDED') DEFAULT 'PENDING',
+  txn_ref VARCHAR(100) UNIQUE,
+  response_code VARCHAR(10) DEFAULT NULL,
+  pay_date TIMESTAMP NULL DEFAULT NULL,
+  note TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  transaction_no VARCHAR(50) UNIQUE
+);

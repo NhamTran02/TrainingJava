@@ -44,7 +44,6 @@ public class CartController {
             @RequestParam boolean selected) {
         cartService.toggleSelected(userId, variantId, selected);
         return ApiResponse.<Void>builder()
-                .code(200)
                 .message("Success")
                 .build();
     }

@@ -23,7 +23,6 @@ public class VnpayController {
     public ApiResponse<VnpayCallbackResponse> vnpayCallback(@RequestParam Map<String, String> params) {
         VnpayCallbackResponse response=paymentService.handleVnpayCallback(params);
         return ApiResponse.<VnpayCallbackResponse>builder()
-                .code(200)
                 .message("success")
                 .result(response)
                 .build();

@@ -333,59 +333,6 @@ DELIMITER ;
 
 CALL DeleteStudentsByAge(18);
 
--- Sinh dữ liệu cho student
-DELIMITER //
-CREATE PROCEDURE seed_students(start_id INT, end_id INT)
-BEGIN
-  DECLARE i INT DEFAULT start_id;
-  WHILE i <= end_id DO
-    INSERT INTO Students (student_id, name, age, class_id)
-    VALUES (
-      i,
-      CONCAT('Student', i),
-      FLOOR(15 + (RAND() * 10)),
-      FLOOR(1 + (RAND() * 4))
-    );
-    SET i = i + 1;
-  END WHILE;
-END;
-//
-DELIMITER ;
-select count(*) from Students;
--- Seed từ 1 đến 1,0000,000
-CALL seed_students(1, 1000000);
-
--- Bật event consumer
-UPDATE performance_schema.setup_consumers
-SET ENABLED = 'YES'
-WHERE NAME = 'events_statements_history_long';
-
--- query chưa index
-EXPLAIN SELECT * FROM Students WHERE name LIKE '%500%';
-SELECT * FROM Students WHERE name LIKE '%500%';
-
--- fulltext index
-ALTER TABLE Students DROP INDEX idx_name;
-ALTER TABLE Students ADD FULLTEXT idx_name (name);
-
-SHOW INDEXES FROM Students;
-
-EXPLAIN SELECT * 
-FROM Students 
-WHERE MATCH(name) AGAINST('500' IN NATURAL LANGUAGE MODE);
-
-SELECT SQL_TEXT,
-       ROUND(TIMER_WAIT/1000000000, 3) AS duration_ms
-FROM performance_schema.events_statements_history_long
-WHERE SQL_TEXT LIKE '%Students%'
-ORDER BY EVENT_ID DESC
-LIMIT 10;
-
-
-
-
-
-
 
 
 

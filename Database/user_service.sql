@@ -1,0 +1,38 @@
+CREATE DATABASE user_service;
+USE user_service;
+
+CREATE TABLE users (
+  id CHAR(36) PRIMARY KEY DEFAULT(uuid()),
+  username VARCHAR(50) NOT NULL UNIQUE,
+  email VARCHAR(255) NOT NULL UNIQUE,
+  password_hash VARCHAR(255) NOT NULL,
+  full_name VARCHAR(255) NOT NULL,
+  phone_number VARCHAR(255) NOT NULL UNIQUE,
+  address VARCHAR(255) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  deleted TINYINT(1) DEFAULT 0,
+  verified TINYINT(1) DEFAULT 0,
+  verification_code VARCHAR(100) DEFAULT NULL
+);
+
+CREATE TABLE roles (
+  id CHAR(36) PRIMARY KEY DEFAULT(uuid()),
+  role_name VARCHAR(50) NOT NULL UNIQUE
+);
+
+CREATE TABLE user_roles (
+  user_id CHAR(36) NOT NULL,
+  role_id CHAR(36) NOT NULL,
+  PRIMARY KEY (user_id, role_id),
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  FOREIGN KEY (role_id) REFERENCES roles(id) ON DELETE CASCADE
+);
+
+CREATE TABLE tokens (
+  id CHAR(36) PRIMARY KEY DEFAULT(uuid()),
+  username VARCHAR(255) NOT NULL,
+  access_token VARCHAR(255) DEFAULT NULL,
+  refresh_token VARCHAR(255) DEFAULT NULL,
+  blacklisted TINYINT(1) DEFAULT 0
+);

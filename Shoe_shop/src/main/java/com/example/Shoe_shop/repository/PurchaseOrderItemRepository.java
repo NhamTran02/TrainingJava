@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,7 +20,7 @@ public interface PurchaseOrderItemRepository extends JpaRepository<PurchaseOrder
         WHERE poi.variant.id= :variantId
         ORDER BY poi.purchaseOrder.orderDate DESC
     """)
-    Optional<PurchaseOrderItem> findTopUnitCostByVariantId(@Param("variantId") Long variantId);
+    Optional<BigDecimal> findTopUnitCostByVariantId(@Param("variantId") Long variantId);
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("""
@@ -29,6 +30,4 @@ public interface PurchaseOrderItemRepository extends JpaRepository<PurchaseOrder
         order by poi.purchaseOrder.orderDate ASC
     """)
     List<PurchaseOrderItem> findAllByVariantId(@Param("variantId") Long variantId, @Param("quantity")  Integer quantity);
-
-
 }

@@ -57,7 +57,6 @@ public class AuthenticationController {
         user.setVerificationCode(null);
         userRepository.save(user);
         return ApiResponse.<AuthenticationResponse>builder()
-                .code(200)
                 .message("Verify successfully!")
                 .build();
     }
@@ -77,7 +76,6 @@ public class AuthenticationController {
     public ApiResponse<Void> forgotPassword(@RequestParam String email) {
         authService.forgotPassword(email);
         return ApiResponse.<Void>builder()
-                .code(200)
                 .message("Mật khẩu tạm thời đã được gửi tới email của bạn.")
                 .build();
     }

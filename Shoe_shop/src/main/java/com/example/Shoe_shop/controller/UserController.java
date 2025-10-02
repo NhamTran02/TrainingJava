@@ -61,7 +61,6 @@ public class UserController {
         }
         userService.changePassword(request);
         return ApiResponse.<Void>builder()
-                .code(200)
                 .message("Change password successfully")
                 .build();
     }

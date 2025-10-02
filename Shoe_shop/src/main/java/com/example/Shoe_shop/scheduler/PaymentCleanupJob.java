@@ -1,17 +1,11 @@
 package com.example.Shoe_shop.scheduler;
 
-import com.example.Shoe_shop.entity.Payment;
 import com.example.Shoe_shop.repository.PaymentRepository;
-import com.example.Shoe_shop.service.EmailService;
 import com.example.Shoe_shop.service.PaymentService;
-import com.example.Shoe_shop.utils.enums.PaymentStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-
-import java.time.LocalDateTime;
-import java.util.List;
 
 @Component
 @RequiredArgsConstructor

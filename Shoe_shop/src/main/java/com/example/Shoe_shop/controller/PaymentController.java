@@ -37,7 +37,6 @@ public class PaymentController {
     public ApiResponse<VnpayQueryResponse> checkStatus(@PathVariable Long orderId) {
         VnpayQueryResponse resp = paymentService.manualCheckVnpayPayment(orderId);
         return ApiResponse.<VnpayQueryResponse>builder()
-                .code(200)
                 .message(resp == null ? "Không nhận được phản hồi từ VNPAY" : "OK")
                 .result(resp)
                 .build();
