@@ -1,6 +1,11 @@
 spring:
   application:
     name: Shoe_shop
+  task:
+    execution:
+      pool:
+        core-size: 5
+        max-size: 8
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
@@ -14,6 +19,11 @@ spring:
       hibernate:
         format_sql: true
         dialect: org.hibernate.dialect.MySQL8Dialect
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password: RedisShoe@2025
   servlet:
     multipart:
       max-file-size: 20MB
@@ -58,3 +68,4 @@ vnpay:
 crm:
   usernamevnpay: "nguyenluong140504@gmail.com"
   passwordvnpay: "@Nguyenluong1405"
+

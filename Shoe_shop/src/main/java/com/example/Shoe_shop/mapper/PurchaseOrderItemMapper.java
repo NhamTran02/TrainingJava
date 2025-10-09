@@ -9,7 +9,4 @@ import org.mapstruct.Mapping;
 public interface PurchaseOrderItemMapper {
     @Mapping(source = "variant.id",target = "variantId")
     PurchaseOrderItemDto toDto(PurchaseOrderItem purchaseOrderItem);
-
-    @Mapping(source = "variantId", target = "variant.id")
-    PurchaseOrderItem toEntity(PurchaseOrderItemDto dto);
 }

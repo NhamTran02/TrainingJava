@@ -2,7 +2,7 @@ CREATE DATABASE user_service;
 USE user_service;
 
 CREATE TABLE users (
-  id CHAR(36) PRIMARY KEY DEFAULT(uuid()),
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
   username VARCHAR(50) NOT NULL UNIQUE,
   email VARCHAR(255) NOT NULL UNIQUE,
   password_hash VARCHAR(255) NOT NULL,
@@ -16,23 +16,25 @@ CREATE TABLE users (
   verification_code VARCHAR(100) DEFAULT NULL
 );
 
+
 CREATE TABLE roles (
-  id CHAR(36) PRIMARY KEY DEFAULT(uuid()),
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
   role_name VARCHAR(50) NOT NULL UNIQUE
 );
 
 CREATE TABLE user_roles (
-  user_id CHAR(36) NOT NULL,
-  role_id CHAR(36) NOT NULL,
+  user_id BIGINT NOT NULL,
+  role_id BIGINT NOT NULL,
   PRIMARY KEY (user_id, role_id),
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
   FOREIGN KEY (role_id) REFERENCES roles(id) ON DELETE CASCADE
 );
 
 CREATE TABLE tokens (
-  id CHAR(36) PRIMARY KEY DEFAULT(uuid()),
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
   username VARCHAR(255) NOT NULL,
   access_token VARCHAR(255) DEFAULT NULL,
   refresh_token VARCHAR(255) DEFAULT NULL,
   blacklisted TINYINT(1) DEFAULT 0
 );
+

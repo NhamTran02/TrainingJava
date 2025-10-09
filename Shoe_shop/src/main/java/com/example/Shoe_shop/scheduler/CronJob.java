@@ -1,6 +1,5 @@
 package com.example.Shoe_shop.scheduler;
 
-import com.example.Shoe_shop.repository.PaymentRepository;
 import com.example.Shoe_shop.service.PaymentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -10,9 +9,8 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 @Log4j2
-public class PaymentCleanupJob {
+public class CronJob {
     private final PaymentService paymentService;
-    private final PaymentRepository paymentRepository;
     // Chạy mỗi 1h
     @Scheduled(cron = "0 0 * * * *")
     public void cancelExpiredVnpay() {

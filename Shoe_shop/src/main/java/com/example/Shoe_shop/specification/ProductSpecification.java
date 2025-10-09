@@ -3,6 +3,7 @@ package com.example.Shoe_shop.specification;
 import com.example.Shoe_shop.entity.Product;
 import com.example.Shoe_shop.entity.ProductVariant;
 import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -40,51 +41,48 @@ public class ProductSpecification {
             return cb.equal(root.get("brand").get("id"), brandId);
         };
     }
-
-    public static Specification<Product> hasPriceRange(BigDecimal minPrice, BigDecimal maxPrice) {
+    public static Specification<Product> hasVariantAttributes(
+            String size, String color, BigDecimal minPrice, BigDecimal maxPrice
+    ) {
         return (root, query, cb) -> {
-            Join<Product, ProductVariant> variantJoin = root.join("variants");
+            boolean hasAnyFilter = (size != null && !size.isEmpty()) ||
+                    (color != null && !color.isEmpty()) ||
+                    minPrice != null ||
+                    maxPrice != null;
+
+            if (!hasAnyFilter) {
+                return null;
+            }
+
+            Join<Product, ProductVariant> variantJoin = root.join("variants", JoinType.LEFT);
             List<Predicate> predicates = new ArrayList<>();
 
+            if (size != null && !size.isEmpty()) {
+                predicates.add(cb.equal(variantJoin.get("size"), size));
+            }
+            if (color != null && !color.isEmpty()) {
+                predicates.add(cb.equal(variantJoin.get("color"), color));
+            }
             if (minPrice != null) {
                 predicates.add(cb.or(
                         cb.greaterThanOrEqualTo(variantJoin.get("salePrice"), minPrice),
-                        cb.and(
-                                cb.isNull(variantJoin.get("salePrice")),
-                                cb.greaterThanOrEqualTo(variantJoin.get("regularPrice"), minPrice)
-                        )
+                        cb.and(cb.isNull(variantJoin.get("salePrice")),
+                                cb.greaterThanOrEqualTo(variantJoin.get("regularPrice"), minPrice))
                 ));
             }
-
             if (maxPrice != null) {
                 predicates.add(cb.or(
                         cb.lessThanOrEqualTo(variantJoin.get("salePrice"), maxPrice),
-                        cb.and(
-                                cb.isNull(variantJoin.get("salePrice")),
-                                cb.lessThanOrEqualTo(variantJoin.get("regularPrice"), maxPrice)
-                        )
+                        cb.and(cb.isNull(variantJoin.get("salePrice")),
+                                cb.lessThanOrEqualTo(variantJoin.get("regularPrice"), maxPrice))
                 ));
             }
 
-            return cb.and(predicates.toArray(new Predicate[0]));
+            query.distinct(true);
+            return predicates.isEmpty() ? null : cb.and(predicates.toArray(new Predicate[0]));
         };
     }
 
-    public static Specification<Product> hasSize(String size) {
-        return (root, query, cb) -> {
-            if (size == null || size.isEmpty()) return null;
-            Join<Product, ProductVariant> variantJoin = root.join("variants");
-            return cb.equal(variantJoin.get("size"), size);
-        };
-    }
-
-    public static Specification<Product> hasColor(String color) {
-        return (root, query, cb) -> {
-            if (color == null || color.isEmpty()) return null;
-            Join<Product, ProductVariant> variantJoin = root.join("variants");
-            return cb.equal(variantJoin.get("color"), color);
-        };
-    }
 
     public static Specification<Product> buildSpecification(
             String keyword,
@@ -101,12 +99,7 @@ public class ProductSpecification {
         spec = spec.and(hasKeyword(keyword))
                 .and(hasCategory(categoryId))
                 .and(hasBrand(brandId))
-                .and(hasPriceRange(minPrice, maxPrice))
-                .and(hasSize(size))
-                .and(hasColor(color));
-
+                .and(hasVariantAttributes(size, color, minPrice, maxPrice));
         return spec;
     }
-
-
 }
