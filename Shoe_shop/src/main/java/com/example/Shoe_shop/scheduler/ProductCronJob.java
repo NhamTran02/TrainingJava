@@ -2,7 +2,6 @@ package com.example.Shoe_shop.scheduler;
 
 import com.example.Shoe_shop.dto.response.ProductQueueItem;
 import com.example.Shoe_shop.entity.Product;
-import com.example.Shoe_shop.mapper.ProductMapper;
 import com.example.Shoe_shop.repository.ProductRepository;
 import com.example.Shoe_shop.service.RedisCacheService;
 import lombok.AccessLevel;
@@ -11,6 +10,7 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -24,7 +24,9 @@ public class ProductCronJob {
     final ProductRepository productRepository;
     final RedisCacheService redisCacheService;
     static final String QUEUE_KEY = "product:queue";
+    final ProductRelatedProcess process;
 
+    @Async("productQueueExecutor")
     @EventListener(ApplicationReadyEvent.class)
     public void preloadAtStartup() {
         log.info("Application started — Running initial product queue preload...");
@@ -32,7 +34,7 @@ public class ProductCronJob {
     }
 
     @Scheduled(cron = "0 */10 * * * *")
-    private void scheduleProductCronJob() {
+    public void scheduleProductCronJob() {
         log.info("Refreshing product queue...");
         redisCacheService.deleteKey(QUEUE_KEY);
         List<Product> products=productRepository.findAll();
@@ -47,6 +49,7 @@ public class ProductCronJob {
             }
         }
         log.info("Loaded {} products into Redis queue", products.size());
+        process.processQueue();
     }
 
 }

@@ -283,7 +283,7 @@ BEGIN
 END ;;
 DELIMITER ;
 
-SHOW INDEX FROM users;
+SHOW INDEX FROM products;
 
 
 

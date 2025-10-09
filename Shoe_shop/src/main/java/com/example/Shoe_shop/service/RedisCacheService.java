@@ -91,6 +91,18 @@ public class RedisCacheService {
             return null;
         }
     }
+
+    public <T> T rPop(String key, Class<T> type) {
+        try {
+            Object raw = redisTemplate.opsForList().rightPop(key);
+            if (raw == null) return null;
+            return objectMapper.convertValue(raw, type);
+        } catch (Exception e) {
+            log.error("rPop: " + e.getMessage());
+            return null;
+        }
+    }
+
     public void deleteKey(String key) {
         try {
             redisTemplate.delete(key);

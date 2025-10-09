@@ -91,7 +91,7 @@ public class ProductServiceImpl implements ProductService {
     public List<ProductResponse> getRelatedProducts(Long id) {
         Product product = entityValidatorUtil.requireProduct(id);
         Long categoryId = product.getCategory().getId();
-        List<Product> relatedProducts = productRepository.findAllByCategory_Id(categoryId);
+        List<Product> relatedProducts = productRepository.findTop20ByCategory_Id(categoryId);
         List<ProductResponse> responses = relatedProducts.stream()
                 .map(p -> {
                     ProductResponse r = productMapper.toResponse(p);
@@ -99,7 +99,6 @@ public class ProductServiceImpl implements ProductService {
                     r.setImages(productImageMapper.toResponseList(p.getImages()));
                     return r;
                 })
-                .limit(10)
                 .toList();
         return responses;
     }

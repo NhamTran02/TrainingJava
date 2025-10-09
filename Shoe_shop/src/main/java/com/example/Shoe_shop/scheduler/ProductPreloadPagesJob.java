@@ -27,13 +27,13 @@ public class ProductPreloadPagesJob {
     static final String BASE_KEY = "product:get-all-product-";
     static final int PAGE_SIZE = 20;
 
-    @Async
+    @Async("productQueueExecutor")
     @EventListener(ApplicationReadyEvent.class)
     public void preloadOnStartup() {
         preloadTopPages();
     }
 
-    @Scheduled(cron = "30 */5 * * * *")
+    @Scheduled(cron = "* */5 * * * *")
     public void preloadTopPages() {
         try {
             for (int page=0;page<2;page++) {
