@@ -22,8 +22,21 @@ public class CartController {
     @PreAuthorize("hasRole('ADMIN') or #userId == authentication.principal.user.id ")
     public ApiResponse<CartResponse> getCartByUserId(@PathVariable Long userId){
         CartResponse cartResponse=cartService.getCartByUserId(userId);
+
+        if(cartResponse==null){
+            return ApiResponse.<CartResponse>builder()
+                    .message("Cart is empty")
+                    .build();
+        }
         return ApiResponse.<CartResponse>builder()
                 .result(cartResponse)
+                .build();
+    }
+
+    @GetMapping("/nqluong/conflict")
+    public ApiResponse<String> testConflict(){
+        return ApiResponse.<String>builder()
+                .result("No Conflict")
                 .build();
     }
 
@@ -45,6 +58,16 @@ public class CartController {
         cartService.toggleSelected(userId, variantId, selected);
         return ApiResponse.<Void>builder()
                 .message("Success")
+                .build();
+    }
+
+    @GetMapping("/nqluong/test-exception")
+    public ApiResponse<String> testException(){
+        if(true){
+            throw new RuntimeException("Test exception handling");
+        }
+        return ApiResponse.<String>builder()
+                .result("No Exception")
                 .build();
     }
 
