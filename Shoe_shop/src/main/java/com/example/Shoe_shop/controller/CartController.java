@@ -23,8 +23,21 @@ public class CartController {
     public ApiResponse<CartResponse> getCartByUserId(@PathVariable Long userId){
         CartResponse cartResponse=cartService.getCartByUserId(userId);
         System.out.println("getCartByUserId:"+cartResponse);
+
+        if(cartResponse==null){
+            return ApiResponse.<CartResponse>builder()
+                    .message("Cart is empty")
+                    .build();
+        }
         return ApiResponse.<CartResponse>builder()
                 .result(cartResponse)
+                .build();
+    }
+
+    @GetMapping("/nqluong/conflict")
+    public ApiResponse<String> testConflict(){
+        return ApiResponse.<String>builder()
+                .result("No Conflict")
                 .build();
     }
 
@@ -49,6 +62,16 @@ public class CartController {
                 .build();
     }
 
+    @GetMapping("/nqluong/test-exception")
+    public ApiResponse<String> testException(){
+        if(true){
+            throw new RuntimeException("Test exception handling");
+        }
+        return ApiResponse.<String>builder()
+                .result("No Exception")
+                .build();
+    }
+
     @DeleteMapping("/{userId}")
     @PreAuthorize("#userId == authentication.principal.user.id or hasRole('ADMIN')")
     public ApiResponse<CartResponse> removeItem(@PathVariable Long userId,@RequestBody CartItemRequest cartItemRequest){
@@ -68,7 +91,5 @@ public class CartController {
                 .result(cartResponse)
                 .build();
     }
-
-
 
 }
