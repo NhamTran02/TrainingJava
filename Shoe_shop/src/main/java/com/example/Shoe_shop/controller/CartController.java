@@ -22,6 +22,7 @@ public class CartController {
     @PreAuthorize("hasRole('ADMIN') or #userId == authentication.principal.user.id ")
     public ApiResponse<CartResponse> getCartByUserId(@PathVariable Long userId){
         CartResponse cartResponse=cartService.getCartByUserId(userId);
+        System.out.println("getCartByUserId:"+cartResponse);
         return ApiResponse.<CartResponse>builder()
                 .result(cartResponse)
                 .build();
@@ -67,5 +68,7 @@ public class CartController {
                 .result(cartResponse)
                 .build();
     }
+
+
 
 }
