@@ -1,6 +1,7 @@
 package com.example.Shoe_shop.service.impl;
 
 import com.example.Shoe_shop.dto.request.OrderRequest;
+import com.example.Shoe_shop.dto.request.PaymentRequest;
 import com.example.Shoe_shop.dto.response.*;
 import com.example.Shoe_shop.entity.*;
 import com.example.Shoe_shop.exception.AppException;
@@ -123,10 +124,18 @@ public class OrderServiceImpl implements OrderService {
         order.setTotalAmount(totalAmount.add(order.getShippingFee()));
         order.setTotalCost(totalCost);
         Order savedOrder = orderRepository.save(order);
-        Payment payment=paymentService.createPayment(savedOrder, orderRequest);
+        PaymentRequest paymentRequest = PaymentRequest.builder()
+                .orderId(savedOrder.getId())
+                .amount(savedOrder.getTotalAmount())
+                .paymentMethod(orderRequest.getPaymentMethod())
+                .note(orderRequest.getNote())
+                .build();
+
+        PaymentResponse paymentResponse = paymentService.createPayment(paymentRequest);
+
         OrderResponse response = orderMapper.toResponse(savedOrder);
         if (orderRequest.getPaymentMethod() == PaymentMethod.VNPAY) {
-            String payUrl = paymentService.createVnpayPaymentUrl(payment, request);
+            String payUrl = paymentService.createVnpayPaymentUrl(paymentResponse, request);
             response.setPaymentUrl(payUrl);
         }
         response.setTrackingNumber(trackingNumber);

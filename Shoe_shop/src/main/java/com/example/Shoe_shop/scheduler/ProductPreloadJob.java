@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit;
 @Component
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class ProductPreloadPagesJob {
+public class ProductPreloadJob {
     ProductService productService;
     RedisCacheService redisCacheService;
 
@@ -42,6 +42,18 @@ public class ProductPreloadPagesJob {
                         productService.getAllProduct(page,PAGE_SIZE,"id","ASC");
                 redisCacheService.setValueWithTimeout(key,response,10, TimeUnit.MINUTES);
                 log.info("Preloaded product page {} into Redis key '{}'", page + 1, key);
+                for(ProductResponse product: response.getContent()) {
+                    try {
+                        String keyProduct="product:product-id-"+product.getId();
+                        ProductResponse detail= productService.getProductByIdInternal(product.getId());
+                        redisCacheService.setValueWithTimeout(keyProduct,detail,10, TimeUnit.MINUTES);
+                        log.info("Preloaded product detail {} into Redis key '{}'", product.getId(), keyProduct);
+                    }
+                    catch (Exception e) {
+                        log.warn("Failed to preload detail for product id {}: {}", product.getId(), e.getMessage());
+                    }
+
+                }
             }
             log.info("Finished preloading first 2 product pages into Redis");
         }

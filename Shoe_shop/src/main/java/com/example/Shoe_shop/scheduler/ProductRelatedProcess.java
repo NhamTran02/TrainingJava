@@ -8,13 +8,11 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.event.EventListener;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -42,7 +40,7 @@ public class ProductRelatedProcess {
                         .toList();
 
                 String cacheKey = RELATED_CACHE_PREFIX + queueItem.getProductId();
-                redisCacheService.setValue(cacheKey, relatedIds);
+                redisCacheService.setValueWithTimeout(cacheKey, relatedIds,10, TimeUnit.MINUTES);
 
                 log.info("Cached {} related products for product {}", relatedIds.size(), queueItem.getProductId());
             }

@@ -22,7 +22,6 @@ import org.thymeleaf.spring6.SpringTemplateEngine;
 public class EmailServiceImpl implements EmailService {
     final JavaMailSender mailSender;
     final SpringTemplateEngine templateEngine;
-    final PaymentRepository paymentRepository;
     String backendUrl = "http://localhost:8080/api";
     @Value("${spring.mail.username}")
     String emailFrom;

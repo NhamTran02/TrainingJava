@@ -1,8 +1,8 @@
 package com.example.Shoe_shop.controller;
 
 import com.example.Shoe_shop.dto.response.ApiResponse;
+import com.example.Shoe_shop.dto.response.PaymentResponse;
 import com.example.Shoe_shop.dto.response.VnpayQueryResponse;
-import com.example.Shoe_shop.repository.OrderRepository;
 import com.example.Shoe_shop.service.PaymentService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +10,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -17,6 +18,13 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class PaymentController {
     private final PaymentService paymentService;
+
+    @GetMapping("/{orderId}")
+   ApiResponse<List<PaymentResponse>> getPayments(@PathVariable Long orderId) {
+        return ApiResponse.<List<PaymentResponse>>builder()
+                .result(paymentService.getPayments(orderId))
+                .build();
+    }
 
     @PostMapping("/retry/{orderId}")
     @PreAuthorize("@PaymentSecurity.hasAccess(#orderId,authentication.name)")

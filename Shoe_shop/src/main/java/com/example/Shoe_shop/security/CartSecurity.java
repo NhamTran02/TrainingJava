@@ -13,7 +13,6 @@ public class CartSecurity {
     private final UserRepository userRepository;
 
     public boolean hasAccess(Authentication authentication, Long cartId) {
-        // Nếu là ADMIN → luôn có quyền
         if (authentication.getAuthorities().stream()
                 .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
             return true;

@@ -77,7 +77,6 @@ public class CartServiceImpl implements CartService {
         }
         Long cartId= cartJdbcRepository.getCartIdByUserId(userId);
         List<CartItemResponse> itemResponses=cartJdbcRepository.findCartItems(cartId);
-        // Kiểm tra item muốn xóa có tồn tại không
         boolean exists= itemResponses.stream().anyMatch(item->item.getVariantId().equals(request.getVariantId()));
         if (!exists) {
             throw new AppException(ErrorCode.CART_EMPTY);

@@ -11,6 +11,7 @@ import java.util.List;
 public interface ProductService {
     ProductResponse createProduct(ProductRequest request);
     ProductResponse getProductById(Long id);
+    ProductResponse getProductByIdInternal(Long id);
     List<ProductResponse> getRelatedProducts(Long id);
     PagedResponse<ProductResponse> getAllProduct(int page, int size, String sortBy, String sortDir);
     PagedResponse<ProductResponse> searchProducts(ProductSearchRequest request,int page, int size, String sortBy, String sortDir);

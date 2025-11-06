@@ -1,6 +1,5 @@
 package com.example.Shoe_shop.dto.request;
 
-import com.example.Shoe_shop.entity.ShippingMethod;
 import com.example.Shoe_shop.utils.enums.PaymentMethod;
 import com.example.Shoe_shop.utils.enums.ShippingType;
 import jakarta.validation.constraints.NotBlank;

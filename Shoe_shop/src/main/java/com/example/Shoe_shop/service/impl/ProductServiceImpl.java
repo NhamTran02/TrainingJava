@@ -88,6 +88,13 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public ProductResponse getProductByIdInternal(Long id) {
+        Product product = entityValidatorUtil.requireProduct(id);
+        return productMapper.toResponse(product);
+    }
+
+    @Override
     public List<ProductResponse> getRelatedProducts(Long id) {
         Product product = entityValidatorUtil.requireProduct(id);
         Long categoryId = product.getCategory().getId();

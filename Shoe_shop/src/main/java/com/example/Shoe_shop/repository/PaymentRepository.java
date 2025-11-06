@@ -34,5 +34,6 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
             @Param("from") LocalDateTime from,
             @Param("to") LocalDateTime to
             );
-    List<Payment> findByOrOrder_Id(Long orderId);
+    List<Payment> findByOrder_Id(Long orderId);
+
 }

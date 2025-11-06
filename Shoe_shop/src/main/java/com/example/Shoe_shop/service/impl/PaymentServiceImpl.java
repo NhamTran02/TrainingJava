@@ -2,6 +2,8 @@ package com.example.Shoe_shop.service.impl;
 
 import com.example.Shoe_shop.client.VnpayClient;
 import com.example.Shoe_shop.dto.request.OrderRequest;
+import com.example.Shoe_shop.dto.request.PaymentRequest;
+import com.example.Shoe_shop.dto.response.PaymentResponse;
 import com.example.Shoe_shop.dto.response.RefundResult;
 import com.example.Shoe_shop.dto.response.VnpayCallbackResponse;
 import com.example.Shoe_shop.dto.response.VnpayQueryResponse;
@@ -9,6 +11,7 @@ import com.example.Shoe_shop.entity.Order;
 import com.example.Shoe_shop.entity.Payment;
 import com.example.Shoe_shop.exception.AppException;
 import com.example.Shoe_shop.exception.ErrorCode;
+import com.example.Shoe_shop.mapper.PaymentMapper;
 import com.example.Shoe_shop.repository.OrderRepository;
 import com.example.Shoe_shop.repository.PaymentRepository;
 import com.example.Shoe_shop.service.EmailService;
@@ -57,8 +60,9 @@ public class PaymentServiceImpl implements PaymentService {
     final TrackingNumberUtil trackingNumberUtil;
     final VnpayClient vnpayClient;
     final EmailService emailService;
+    final PaymentMapper paymentMapper;
     // Bộ nhớ tạm đếm số lần query
-    private final Map<String, Integer> queryAttemptMap = new ConcurrentHashMap<>();
+    final Map<String, Integer> queryAttemptMap = new ConcurrentHashMap<>();
 
     @Value("${vnpay.tmnCode}")
     String tmnCode;
@@ -71,25 +75,24 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     @Transactional
-    public Payment createPayment(Order order, OrderRequest orderRequest) {
-        List<Payment> payments = paymentRepository.findByOrOrder_Id(order.getId());
+    public PaymentResponse createPayment(PaymentRequest request) {
+        Order order = orderRepository.findById(request.getOrderId())
+                .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
+
+        List<Payment> payments = paymentRepository.findByOrder_Id(order.getId());
         boolean hasSuccess = payments.stream()
                 .anyMatch(p -> p.getStatus() == PaymentStatus.SUCCESS);
-        if (hasSuccess) {
-            throw new AppException(ErrorCode.PAYMENT_ALREADY_SUCCESS);
-        }
-        if (order.getStatus() != OrderStatus.PENDING) {
+        if (hasSuccess) throw new AppException(ErrorCode.PAYMENT_ALREADY_SUCCESS);
+        if (order.getStatus() != OrderStatus.PENDING)
             throw new AppException(ErrorCode.ORDER_NOT_PAYABLE);
-        }
-        Payment payment = Payment.builder()
-                .order(order)
-                .paymentMethod(orderRequest.getPaymentMethod())
-                .amount(order.getTotalAmount())
-                .txnRef(order.getTrackingNumber())
-                .note(orderRequest.getNote())
-                .status(PaymentStatus.PENDING)
-                .build();
-        return paymentRepository.save(payment);
+
+        Payment payment = paymentMapper.toEntity(request);
+        payment.setOrder(order);
+        payment.setStatus(PaymentStatus.PENDING);
+        payment.setTxnRef(order.getTrackingNumber());
+
+        Payment saved = paymentRepository.save(payment);
+        return paymentMapper.toResponse(saved);
     }
 
     @Override
@@ -116,11 +119,22 @@ public class PaymentServiceImpl implements PaymentService {
                 .build();
 
         paymentRepository.save(newPayment);
-        return createVnpayPaymentUrl(newPayment, request);
+        PaymentResponse paymentResponse= paymentMapper.toResponse(newPayment);
+        return createVnpayPaymentUrl(paymentResponse, request);
     }
 
     @Override
-    public String createVnpayPaymentUrl(Payment payment, HttpServletRequest request) {
+    public List<PaymentResponse> getPayments(Long orderId) {
+        List<Payment> payments = paymentRepository.findByOrder_Id(orderId);
+        List<PaymentResponse> paymentResponses = new ArrayList<>();
+        for (Payment payment : payments) {
+            paymentResponses.add(paymentMapper.toResponse(payment));
+        }
+        return paymentResponses;
+    }
+
+    @Override
+    public String createVnpayPaymentUrl(PaymentResponse payment, HttpServletRequest request) {
         try {
             String vnp_Version = "2.1.0";
             String vnp_Command = "pay";
