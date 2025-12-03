@@ -1,0 +1,186 @@
+<app-header></app-header>
+
+<div class="min-h-screen bg-gray-100 py-8">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    
+    <!-- Loading State -->
+    <div *ngIf="loading" class="flex justify-center py-20">
+      <div class="animate-spin rounded-full h-16 w-16 border-b-2 border-orange-500"></div>
+    </div>
+
+    <!-- Profile Content -->
+    <div *ngIf="!loading && user" class="bg-white rounded-lg shadow-sm overflow-hidden">
+      
+      <!-- Header -->
+      <div class="bg-gradient-to-r from-orange-500 to-orange-600 px-6 py-8">
+        <div class="flex items-center">
+          <div class="w-20 h-20 bg-white rounded-full flex items-center justify-center text-orange-500 text-3xl font-bold">
+            {{ (user.fullName || user.username).charAt(0).toUpperCase() }}
+          </div>
+          <div class="ml-6 text-white">
+            <h1 class="text-2xl font-bold">{{ user.fullName || user.username }}</h1>
+            <p class="text-orange-100">{{ user.email }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="border-b border-gray-200">
+        <nav class="flex -mb-px">
+          <button (click)="switchTab('info')"
+                  [class.border-orange-500]="activeTab === 'info'"
+                  [class.text-orange-600]="activeTab === 'info'"
+                  [class.border-transparent]="activeTab !== 'info'"
+                  [class.text-gray-500]="activeTab !== 'info'"
+                  class="px-6 py-4 border-b-2 font-medium text-sm hover:text-orange-600 hover:border-orange-300 transition">
+            Thông tin cá nhân
+          </button>
+          <button (click)="switchTab('password')"
+                  [class.border-orange-500]="activeTab === 'password'"
+                  [class.text-orange-600]="activeTab === 'password'"
+                  [class.border-transparent]="activeTab !== 'password'"
+                  [class.text-gray-500]="activeTab !== 'password'"
+                  class="px-6 py-4 border-b-2 font-medium text-sm hover:text-orange-600 hover:border-orange-300 transition">
+            Đổi mật khẩu
+          </button>
+        </nav>
+      </div>
+
+      <!-- Tab Content -->
+      <div class="p-6">
+        
+        <!-- Personal Info Tab -->
+        <div *ngIf="activeTab === 'info'">
+          <div class="flex justify-between items-center mb-6">
+            <h2 class="text-xl font-semibold text-gray-900">Thông tin cá nhân</h2>
+            <button *ngIf="!editMode" 
+                    (click)="toggleEditMode()"
+                    class="px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600 transition">
+              Chỉnh sửa
+            </button>
+          </div>
+
+          <div class="space-y-4">
+            <!-- Username (Read-only) -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Tên đăng nhập</label>
+              <input type="text" 
+                     [value]="user.username" 
+                     readonly
+                     class="w-full px-4 py-2 border border-gray-300 rounded bg-gray-50 text-gray-600 cursor-not-allowed">
+            </div>
+
+            <!-- Email (Read-only) -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+              <input type="email" 
+                     [value]="user.email" 
+                     readonly
+                     class="w-full px-4 py-2 border border-gray-300 rounded bg-gray-50 text-gray-600 cursor-not-allowed">
+            </div>
+
+            <!-- Full Name -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Họ và tên</label>
+              <input type="text" 
+                     [(ngModel)]="editForm.fullName"
+                     [readonly]="!editMode"
+                     [class.bg-gray-50]="!editMode"
+                     [class.cursor-not-allowed]="!editMode"
+                     class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-orange-500 focus:border-transparent">
+            </div>
+
+            <!-- Phone Number -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Số điện thoại</label>
+              <input type="tel" 
+                     [(ngModel)]="editForm.phoneNumber"
+                     [readonly]="!editMode"
+                     [class.bg-gray-50]="!editMode"
+                     [class.cursor-not-allowed]="!editMode"
+                     placeholder="0xxxxxxxxx"
+                     class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-orange-500 focus:border-transparent">
+            </div>
+
+            <!-- Address -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Địa chỉ</label>
+              <textarea [(ngModel)]="editForm.address"
+                        [readonly]="!editMode"
+                        [class.bg-gray-50]="!editMode"
+                        [class.cursor-not-allowed]="!editMode"
+                        rows="3"
+                        class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-orange-500 focus:border-transparent"></textarea>
+            </div>
+
+            <!-- Action Buttons (Edit mode) -->
+            <div *ngIf="editMode" class="flex space-x-3 pt-4">
+              <button (click)="saveProfile()"
+                      class="flex-1 px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600 transition">
+                Lưu thay đổi
+              </button>
+              <button (click)="toggleEditMode()"
+                      class="flex-1 px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition">
+                Hủy
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Change Password Tab -->
+        <div *ngIf="activeTab === 'password'">
+          <h2 class="text-xl font-semibold text-gray-900 mb-6">Đổi mật khẩu</h2>
+
+          <div class="space-y-4 max-w-md">
+            <!-- Current Password -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Mật khẩu hiện tại *</label>
+              <input type="password" 
+                     [(ngModel)]="passwordForm.currentPassword"
+                     placeholder="Nhập mật khẩu hiện tại"
+                     class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-orange-500 focus:border-transparent">
+            </div>
+
+            <!-- New Password -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Mật khẩu mới *</label>
+              <input type="password" 
+                     [(ngModel)]="passwordForm.newPassword"
+                     placeholder="Nhập mật khẩu mới (tối thiểu 6 ký tự)"
+                     class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-orange-500 focus:border-transparent">
+            </div>
+
+            <!-- Confirm New Password -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Xác nhận mật khẩu mới *</label>
+              <input type="password" 
+                     [(ngModel)]="passwordForm.confirmPassword"
+                     placeholder="Nhập lại mật khẩu mới"
+                     class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-orange-500 focus:border-transparent">
+            </div>
+
+            <!-- Submit Button -->
+            <div class="pt-4">
+              <button (click)="changePassword()"
+                      class="w-full px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600 transition">
+                Đổi mật khẩu
+              </button>
+            </div>
+
+            <!-- Password Requirements -->
+            <div class="bg-blue-50 border border-blue-200 rounded p-4 mt-4">
+              <p class="text-sm text-blue-800 font-medium mb-2">Yêu cầu mật khẩu:</p>
+              <ul class="text-sm text-blue-700 space-y-1 list-disc list-inside">
+                <li>Tối thiểu 6 ký tự</li>
+                <li>Mật khẩu mới phải khác mật khẩu cũ</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-footer></app-footer>

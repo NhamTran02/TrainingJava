@@ -1,0 +1,19 @@
+.dropdown-enter {
+  animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Logo color filter - change black to orange */
+.logo-orange {
+  filter: brightness(0) saturate(100%) invert(55%) sepia(89%) saturate(2477%) hue-rotate(360deg) brightness(102%) contrast(96%);
+}

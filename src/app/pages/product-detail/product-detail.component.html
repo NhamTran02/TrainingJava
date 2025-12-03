@@ -1,0 +1,236 @@
+<app-header></app-header>
+
+<div class="min-h-screen bg-gray-50">
+  <!-- Loading State -->
+  <div *ngIf="loading" class="flex justify-center items-center py-20">
+    <div class="animate-spin rounded-full h-16 w-16 border-b-2 border-orange-500"></div>
+  </div>
+
+  <!-- Product Detail -->
+  <div *ngIf="!loading && product" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Breadcrumb -->
+    <nav class="flex mb-8" aria-label="Breadcrumb">
+      <ol class="inline-flex items-center space-x-1 md:space-x-3">
+        <li class="inline-flex items-center">
+          <a routerLink="/" class="text-gray-700 hover:text-orange-500 inline-flex items-center">
+            <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path>
+            </svg>
+            Trang chủ
+          </a>
+        </li>
+        <li>
+          <div class="flex items-center">
+            <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+            </svg>
+            <span class="text-gray-500 ml-1 md:ml-2">{{ product.categoryName }}</span>
+          </div>
+        </li>
+        <li aria-current="page">
+          <div class="flex items-center">
+            <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+            </svg>
+            <span class="text-gray-500 ml-1 md:ml-2 font-medium">{{ product.name }}</span>
+          </div>
+        </li>
+      </ol>
+    </nav>
+
+    <!-- Product Content -->
+    <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 p-8">
+        <!-- Product Images -->
+        <div class="relative">
+          <!-- Main Image -->
+          <div class="relative aspect-square bg-gray-100 rounded-xl mb-4 overflow-hidden">
+            <img *ngIf="selectedImage" [src]="selectedImage" [alt]="product.name" class="w-full h-full object-cover">
+            <div *ngIf="!selectedImage" class="w-full h-full flex items-center justify-center">
+              <svg class="h-32 w-32 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+            </div>
+            
+            <!-- Sale Badge -->
+            <div *ngIf="hasDiscount()" 
+                 class="absolute top-4 left-4 bg-red-500 text-white px-4 py-2 rounded-full text-lg font-bold shadow-lg">
+              -{{ getDiscountPercentage() }}%
+            </div>
+          </div>
+          
+          <!-- Thumbnail Images -->
+          <div *ngIf="product.images && product.images.length > 1" class="grid grid-cols-4 gap-2">
+            <div *ngFor="let image of product.images" 
+                 (click)="selectImage(image.url)"
+                 class="aspect-square bg-gray-100 rounded-lg overflow-hidden cursor-pointer border-2 transition-all"
+                 [class.border-orange-500]="selectedImage === image.url"
+                 [class.border-gray-200]="selectedImage !== image.url">
+              <img [src]="image.url" [alt]="product.name" class="w-full h-full object-cover">
+            </div>
+          </div>
+        </div>
+
+        <!-- Product Info -->
+        <div class="flex flex-col">
+          <div class="flex items-center justify-between gap-3 mb-2">
+            <h1 class="text-3xl font-bold text-gray-900">{{ product.name }}</h1>
+            <!-- Wishlist Button -->
+            <button (click)="toggleCurrentProductWishlist()" 
+                    class="bg-white p-2 rounded-full shadow-lg hover:shadow-xl transition-all flex-shrink-0">
+              <svg class="w-7 h-7 transition-colors" 
+                   [class.text-red-500]="isCurrentProductInWishlist"
+                   [class.fill-red-500]="isCurrentProductInWishlist"
+                   [class.text-gray-400]="!isCurrentProductInWishlist"
+                   viewBox="0 0 24 24" 
+                   [attr.fill]="isCurrentProductInWishlist ? 'currentColor' : 'none'"
+                   stroke="currentColor" 
+                   stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+              </svg>
+            </button>
+          </div>
+          <p class="text-lg text-gray-600 mb-4">Brand: {{ product.brandName }}</p>
+          <p class="text-lg text-gray-600 mb-4">Danh mục: {{ product.categoryName }}</p>
+          
+          <!-- Price -->
+          <div class="mb-6">
+            <div *ngIf="selectedVariant" class="flex items-center space-x-4">
+              <span class="text-3xl font-bold text-orange-500">{{ selectedVariant.salePrice | number:'1.0-0' }}đ</span>
+              <span *ngIf="selectedVariant.salePrice < selectedVariant.regularPrice" 
+                    class="text-xl text-gray-400 line-through">{{ selectedVariant.regularPrice | number:'1.0-0' }}đ</span>
+              <span *ngIf="selectedVariant.salePrice < selectedVariant.regularPrice" 
+                    class="bg-red-100 text-red-800 text-sm font-medium px-2.5 py-0.5 rounded">
+                -{{ Math.round((1 - selectedVariant.salePrice / selectedVariant.regularPrice) * 100) }}%
+              </span>
+            </div>
+          </div>
+
+          <!-- Description -->
+          <div class="mb-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-2">Mô tả sản phẩm</h3>
+            <p class="text-gray-600 leading-relaxed">{{ product.description }}</p>
+          </div>
+
+          <!-- Variants -->
+          <div class="mb-6" *ngIf="product.variants && product.variants.length > 0">
+            <h3 class="text-lg font-semibold text-gray-900 mb-3">Chọn phiên bản</h3>
+            <div class="grid grid-cols-2 gap-3">
+              <div *ngFor="let variant of product.variants" 
+                   (click)="selectVariant(variant)"
+                   [class.opacity-50]="variant.stockQuantity === 0"
+                   [class.cursor-not-allowed]="variant.stockQuantity === 0"
+                   class="border-2 rounded-lg p-3 cursor-pointer transition-all"
+                   [class.border-orange-500]="selectedVariant?.id === variant.id"
+                   [class.bg-orange-50]="selectedVariant?.id === variant.id"
+                   [class.border-gray-200]="selectedVariant?.id !== variant.id">
+                <div class="text-sm font-medium text-gray-900">Size {{ variant.size }} - {{ variant.color }}</div>
+                <div class="text-sm text-orange-500 font-semibold">{{ variant.salePrice | number:'1.0-0' }}đ</div>
+                <div class="text-xs" [class.text-red-500]="variant.stockQuantity === 0" [class.text-gray-500]="variant.stockQuantity > 0">
+                  {{ variant.stockQuantity === 0 ? 'Hết hàng' : 'Còn ' + variant.stockQuantity + ' sản phẩm' }}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quantity -->
+          <div class="mb-6">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Số lượng</label>
+            <div class="flex items-center space-x-3">
+              <button (click)="decrementQuantity()" [disabled]="quantity <= 1"
+                      class="w-10 h-10 rounded-lg border border-gray-300 flex items-center justify-center hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
+                </svg>
+              </button>
+              <span class="text-xl font-semibold w-12 text-center">{{ quantity }}</span>
+              <button (click)="incrementQuantity()" 
+                      [disabled]="!selectedVariant || quantity >= selectedVariant.stockQuantity"
+                      class="w-10 h-10 rounded-lg border border-gray-300 flex items-center justify-center hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                </svg>
+              </button>
+            </div>
+            <p *ngIf="selectedVariant" class="text-sm text-gray-500 mt-1">
+              Còn {{ selectedVariant.stockQuantity }} sản phẩm
+            </p>
+          </div>
+
+          <!-- Actions -->
+          <div class="flex space-x-4 mt-auto">
+            <button (click)="addToCart()" 
+                    [disabled]="!selectedVariant || selectedVariant.stockQuantity === 0"
+                    class="flex-1 bg-orange-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+              Thêm vào giỏ hàng
+            </button>
+            <button (click)="goBack()" 
+                    class="px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+              Quay lại
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Related Products -->
+    <div *ngIf="relatedProducts && relatedProducts.length > 0" class="mt-12">
+      <h3 class="text-2xl font-bold text-gray-900 mb-6">Sản phẩm liên quan</h3>
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div *ngFor="let relatedProduct of relatedProducts" 
+             (click)="viewProduct(relatedProduct.id)"
+             class="bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow overflow-hidden cursor-pointer">
+          <div class="aspect-square bg-gray-200 flex items-center justify-center relative">
+            <img *ngIf="getProductThumbnail(relatedProduct)" 
+                 [src]="getProductThumbnail(relatedProduct)" 
+                 [alt]="relatedProduct.name" 
+                 class="w-full h-full object-cover">
+            <svg *ngIf="!getProductThumbnail(relatedProduct)" class="h-20 w-20 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            
+            <!-- Discount Badge -->
+            <div *ngIf="getProductDiscountPercentage(relatedProduct) > 0" 
+                 class="absolute top-2 left-2 bg-red-500 text-white px-2 py-1 rounded-full text-xs font-bold shadow-lg">
+              -{{ getProductDiscountPercentage(relatedProduct) }}%
+            </div>
+
+            <!-- Wishlist Button -->
+            <button (click)="toggleWishlist($event, relatedProduct.id)" 
+                    class="absolute top-2 right-2 bg-white rounded-full p-2 shadow-md hover:shadow-lg transition-all z-10">
+              <svg class="w-5 h-5 transition-colors" 
+                   [class.text-red-500]="isInWishlist(relatedProduct.id)"
+                   [class.fill-red-500]="isInWishlist(relatedProduct.id)"
+                   [class.text-gray-400]="!isInWishlist(relatedProduct.id)"
+                   viewBox="0 0 24 24" 
+                   [attr.fill]="isInWishlist(relatedProduct.id) ? 'currentColor' : 'none'"
+                   stroke="currentColor" 
+                   stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+              </svg>
+            </button>
+          </div>
+          <div class="p-3">
+            <h4 class="font-semibold text-gray-900 text-sm mb-1 line-clamp-2">{{ relatedProduct.name }}</h4>
+            <p class="text-xs text-gray-600 mb-2">Brand: {{ relatedProduct.brandName }}</p>
+            <span class="text-orange-500 font-bold">{{ getMinPrice(relatedProduct) | number:'1.0-0' }}đ</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Product Not Found -->
+  <div *ngIf="!loading && !product" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
+    <svg class="mx-auto h-24 w-24 text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+    <h3 class="text-xl font-semibold text-gray-900 mb-2">Không tìm thấy sản phẩm</h3>
+    <p class="text-gray-600 mb-4">Sản phẩm bạn đang tìm không tồn tại hoặc đã bị xóa</p>
+    <button (click)="goBack()" class="bg-orange-500 text-white px-6 py-2 rounded-lg hover:bg-orange-600 transition-colors">
+      Quay lại trang chủ
+    </button>
+  </div>
+</div>
+
+<app-footer></app-footer>

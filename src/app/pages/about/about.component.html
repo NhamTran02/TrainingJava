@@ -1,0 +1,101 @@
+<app-header></app-header>
+
+<div class="min-h-screen bg-gray-50 py-12">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    
+    <h1 class="text-4xl font-bold text-center text-gray-900 mb-12">Về TTN Shoe Shop</h1>
+
+    <div class="mb-12">
+      <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+        <img src="assets/images/team.png" 
+             alt="Đội ngũ TTN Shoe Shop" 
+             class="w-full h-auto object-contain"
+             onerror="this.src='https://via.placeholder.com/1200x400/f97316/ffffff?text=TTN+Shoe+Shop+Team'">
+      </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-md p-8 mb-12">
+      <h2 class="text-3xl font-bold text-gray-900 mb-6">Câu chuyện thương hiệu</h2>
+      
+      <div class="prose max-w-none text-gray-700 space-y-4">
+        <p class="text-lg leading-relaxed">
+          TTN Shoe Shop được thành lập với niềm đam mê mãnh liệt về thời trang và mong muốn mang đến những bước đi tự tin cho khách hàng. Xuất phát điểm từ một cửa hàng nhỏ, chúng tôi đã không ngừng nỗ lực, tìm tòi và phát triển để trở thành một trong những địa chỉ tin cậy hàng đầu cho các tín đồ yêu giày.
+        </p>
+
+        <p class="text-lg leading-relaxed">
+          Chúng tôi hiểu rằng, một đôi giày tốt không chỉ là phụ kiện thời trang, mà còn là người bạn đồng hành trên mọi nẻo đường. Vì vậy, sự tỉ mỉ trong từng đường kim mũi chỉ và sự khắt khe trong khâu chọn lọc sản phẩm luôn là ưu tiên hàng đầu tại TTN Shoe Shop.
+        </p>
+
+        <div class="bg-orange-50 border-l-4 border-orange-500 p-6 my-6">
+          <h3 class="text-xl font-bold text-gray-900 mb-3">Sứ mệnh của chúng tôi</h3>
+          <p class="text-gray-700">
+            Mang đến cho khách hàng những sản phẩm giày dép chất lượng cao, đa dạng mẫu mã với mức giá hợp lý nhất. 
+            Chúng tôi cam kết kiến tạo trải nghiệm mua sắm tuyệt vời, nơi mỗi khách hàng đều tìm thấy phong cách riêng của chính mình.
+          </p>
+        </div>
+
+        <h3 class="text-2xl font-bold text-gray-900 mt-8 mb-4">Phong cách và Xu hướng</h3>
+        <p class="text-lg leading-relaxed">
+          Tại TTN Shoe Shop, chúng tôi liên tục cập nhật những xu hướng thời trang mới nhất trên thế giới. Dù bạn đang tìm kiếm sự năng động của Sneaker, sự lịch lãm của giày da hay sự thoải mái của những đôi giày lười, chúng tôi đều có những lựa chọn hoàn hảo dành cho bạn.
+        </p>
+
+        <h3 class="text-2xl font-bold text-gray-900 mt-8 mb-4">Cam kết về Chất lượng</h3>
+        <p class="text-lg leading-relaxed">
+          Chất lượng là tôn chỉ hoạt động của chúng tôi. Tất cả sản phẩm tại cửa hàng đều có nguồn gốc rõ ràng, được kiểm định kỹ lưỡng về độ bền, chất liệu và độ êm ái trước khi đến tay khách hàng. Chúng tôi nói không với hàng kém chất lượng.
+        </p>
+
+        <h3 class="text-2xl font-bold text-gray-900 mt-8 mb-4">Trải nghiệm khách hàng</h3>
+        <p class="text-lg leading-relaxed">
+          Chúng tôi luôn đặt khách hàng làm trung tâm. Đội ngũ nhân viên nhiệt tình, am hiểu thời trang luôn sẵn sàng tư vấn để bạn tìm được đôi giày ưng ý nhất. Bên cạnh đó, chính sách đổi trả linh hoạt và chế độ bảo hành chu đáo là lời cam kết vững chắc của chúng tôi.
+        </p>
+      </div>
+    </div>
+
+    <div class="mb-12">
+      <h2 class="text-3xl font-bold text-gray-900 mb-6">Không gian cửa hàng</h2>
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div *ngFor="let image of storeImages" class="aspect-square bg-gray-200 rounded-lg overflow-hidden shadow-md hover:shadow-xl transition">
+          <img [src]="image" 
+               alt="Hình ảnh cửa hàng" 
+               class="w-full h-full object-cover hover:scale-110 transition duration-300"
+               onerror="this.src='https://via.placeholder.com/400/f97316/ffffff?text=Store'">
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="bg-white rounded-lg shadow-md p-6 text-center">
+        <div class="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <svg class="w-8 h-8 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+        <h3 class="text-xl font-bold text-gray-900 mb-2">Chất lượng đảm bảo</h3>
+        <p class="text-gray-600">Sản phẩm tuyển chọn kỹ càng, bền đẹp theo thời gian.</p>
+      </div>
+
+      <div class="bg-white rounded-lg shadow-md p-6 text-center">
+        <div class="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <svg class="w-8 h-8 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+        <h3 class="text-xl font-bold text-gray-900 mb-2">Giá cả cạnh tranh</h3>
+        <p class="text-gray-600">Mức giá tốt nhất thị trường cùng nhiều ưu đãi hấp dẫn.</p>
+      </div>
+
+      <div class="bg-white rounded-lg shadow-md p-6 text-center">
+        <div class="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <svg class="w-8 h-8 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" />
+          </svg>
+        </div>
+        <h3 class="text-xl font-bold text-gray-900 mb-2">Hỗ trợ tận tâm</h3>
+        <p class="text-gray-600">Đội ngũ tư vấn nhiệt tình, hỗ trợ khách hàng 24/7.</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<app-footer></app-footer>

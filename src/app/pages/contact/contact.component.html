@@ -1,0 +1,129 @@
+<app-header></app-header>
+
+<div class="min-h-screen bg-gray-50 py-12">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    
+    <h1 class="text-4xl font-bold text-center text-gray-900 mb-12">Liên hệ với chúng tôi</h1>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      
+      <!-- Contact Form -->
+      <div class="bg-white rounded-lg shadow-md p-8">
+        <h2 class="text-2xl font-semibold text-gray-900 mb-6">Gửi tin nhắn</h2>
+        
+        <form (ngSubmit)="submitForm()" class="space-y-6">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Tên</label>
+            <input type="text" 
+                   [(ngModel)]="contactForm.name"
+                   name="name"
+                   placeholder="Nhập tên của bạn"
+                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500">
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+            <input type="email" 
+                   [(ngModel)]="contactForm.email"
+                   name="email"
+                   placeholder="Nhập email của bạn"
+                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500">
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Message</label>
+            <textarea [(ngModel)]="contactForm.message"
+                      name="message"
+                      rows="5"
+                      placeholder="Nhập nội dung tin nhắn..."
+                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 resize-none"></textarea>
+          </div>
+
+          <button type="submit" 
+                  class="w-full bg-orange-500 text-white py-3 rounded-lg font-semibold hover:bg-orange-600 transition">
+            Gửi liên hệ
+          </button>
+        </form>
+
+        <div class="mt-8 pt-8 border-t border-gray-200">
+          <p class="text-sm text-gray-600 mb-4">
+            <strong>Thời gian làm việc</strong><br>
+            Cửa hàng mở cửa từ 8:00 - 22:00 tất cả các ngày trong tuần (bao gồm cả Thứ 7, Chủ Nhật và ngày lễ).
+          </p>
+          <p class="text-sm text-gray-600">
+            <strong>Phản hồi nhanh chóng</strong><br>
+            Mọi thắc mắc gửi qua form hoặc email sẽ được đội ngũ CSKH của TTN Shoe Shop phản hồi trong vòng 24 giờ làm việc.
+          </p>
+        </div>
+      </div>
+
+      <!-- Contact Info & Map -->
+      <div class="space-y-6">
+        <!-- Contact Info -->
+        <div class="bg-white rounded-lg shadow-md p-8">
+          <div class="space-y-6">
+            <div class="flex items-start space-x-4">
+              <div class="flex-shrink-0">
+                <svg class="w-6 h-6 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+              </div>
+              <div>
+                <h3 class="font-semibold text-gray-900 mb-1">Địa chỉ</h3>
+                <p class="text-gray-600">23 Thanh Hà, Q. Hà Đông, Hanoi</p>
+              </div>
+            </div>
+
+            <div class="flex items-start space-x-4">
+              <div class="flex-shrink-0">
+                <svg class="w-6 h-6 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                </svg>
+              </div>
+              <div>
+                <h3 class="font-semibold text-gray-900 mb-1">Điện thoại</h3>
+                <p class="text-gray-600">0912 355 888</p>
+              </div>
+            </div>
+
+            <div class="flex items-start space-x-4">
+              <div class="flex-shrink-0">
+                <svg class="w-6 h-6 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+              </div>
+              <div>
+                <h3 class="font-semibold text-gray-900 mb-1">Email</h3>
+                <p class="text-gray-600">support&#64;shoeshop.com</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Map -->
+        <div class="bg-white rounded-lg shadow-md overflow-hidden">
+          <div class="h-96">
+            <iframe 
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3725.2920536782!2d105.77971831476295!3d20.981004986024!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3135acfb3e3f3e3d%3A0x3e3f3e3d3e3f3e3d!2zVGhhbmggSMOgLCBIw6AgxJDDtG5nLCBIw6AgTuG7mWksIFZp4buHdCBOYW0!5e0!3m2!1svi!2s!4v1234567890123!5m2!1svi!2s"
+              width="100%" 
+              height="100%" 
+              style="border:0;" 
+              allowfullscreen="" 
+              loading="lazy">
+            </iframe>
+          </div>
+          <div class="p-4 bg-gray-50">
+            <p class="text-sm text-gray-600">
+              <strong>23 Thanh Hà, Q. Hà Đông...</strong><br>
+              <a href="https://maps.google.com" target="_blank" class="text-orange-500 hover:underline">Xem google map</a>
+            </p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<app-footer></app-footer>
