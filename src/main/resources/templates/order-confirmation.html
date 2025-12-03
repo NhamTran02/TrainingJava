@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background-color: #f2f4f6;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+        .email-container {
+            max-width: 680px;
+            margin: 30px auto;
+            background-color: #ffffff;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+        }
+        .header {
+            background: linear-gradient(135deg, #ff7e5f, #feb47b);
+            padding: 25px;
+            text-align: center;
+            color: #fff;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 700;
+        }
+        .content {
+            padding: 30px 25px;
+        }
+        .content p {
+            font-size: 16px;
+            line-height: 1.6;
+            margin: 15px 0;
+        }
+        .highlight {
+            color: #ff7e5f;
+            font-weight: bold;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        th {
+            background-color: #ffefd5;
+            color: #333;
+            padding: 12px 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #f1f1f1;
+        }
+        tr:nth-child(even) {
+            background-color: #fdf6f0;
+        }
+        .total {
+            font-weight: 700;
+            font-size: 16px;
+            color: #ff7e5f;
+        }
+        .address {
+            background: #fff7f0;
+            border-left: 5px solid #ff7e5f;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-top: 25px;
+        }
+        .footer {
+            text-align: center;
+            padding: 20px 25px;
+            font-size: 13px;
+            color: #999;
+            background-color: #f9f9f9;
+            border-top: 1px solid #eee;
+        }
+        .footer a {
+            color: #ff7e5f;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+<div class="email-container">
+    <!-- Header -->
+    <div class="header">
+        <h1>Đơn hàng #<span th:text="${orderId}"></span> đã được xác nhận ✅</h1>
+    </div>
+
+    <!-- Content -->
+    <div class="content">
+        <p>Xin chào <span class="highlight" th:text="${customerName}"></span>,</p>
+        <p>Cảm ơn bạn đã mua sắm tại <strong>ShoeShop</strong>! Đây là thông tin chi tiết đơn hàng của bạn:</p>
+        
+        <!-- Order Info -->
+        <div class="address" style="margin-bottom: 20px;">
+            <p><strong>📋 Thông tin đơn hàng:</strong></p>
+            <p>Mã vận đơn: <span class="highlight" th:text="${trackingNumber}"></span></p>
+            <p>Người nhận: <span th:text="${customerName}"></span></p>
+            <p>Số điện thoại: <span class="highlight" th:text="${customerPhone}"></span></p>
+        </div>
+
+        <!-- Order Table -->
+        <table>
+            <thead>
+            <tr>
+                <th>Sản phẩm</th>
+                <th>Số lượng</th>
+                <th>Đơn giá</th>
+                <th>Thành tiền</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="item : ${orderItems}">
+                <td th:text="${item.variant.product.name} + ' (' + ${item.variant.color} + ', ' + ${item.variant.size} + ')'"></td>
+                <td th:text="${item.quantity}"></td>
+                <td th:text="${#numbers.formatDecimal(item.unitPrice,0,'COMMA',0,'POINT')} + ' VND'"></td>
+                <td th:text="${#numbers.formatDecimal(item.unitPrice*item.quantity,0,'COMMA',0,'POINT')} + ' VND'"></td>
+            </tr>
+            </tbody>
+            <tfoot>
+            <tr>
+                <td colspan="3">Tạm tính</td>
+                <td th:text="${#numbers.formatDecimal(orderTotal - shippingFee,0,'COMMA',0,'POINT')} + ' VND'"></td>
+            </tr>
+            <tr>
+                <td colspan="3">Phí vận chuyển</td>
+                <td th:text="${#numbers.formatDecimal(shippingFee,0,'COMMA',0,'POINT')} + ' VND'"></td>
+            </tr>
+            <tr>
+                <td colspan="3" class="total">Tổng cộng</td>
+                <td class="total" th:text="${#numbers.formatDecimal(orderTotal,0,'COMMA',0,'POINT')} + ' VND'"></td>
+            </tr>
+            </tfoot>
+        </table>
+
+        <!-- Shipping Address -->
+        <div class="address">
+            <p><strong>📦 Địa chỉ giao hàng:</strong></p>
+            <p th:text="${shippingAddress}"></p>
+        </div>
+
+        <p>Đơn hàng của bạn đang được xử lý và sẽ sớm được giao đến bạn. Cảm ơn bạn đã tin tưởng <strong>ShoeShop</strong> 💛</p>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        Mọi thắc mắc vui lòng liên hệ <a href="nhamtran2k2@gmail.com">nhamtran2k2@gmail.com</a><br>
+        © 2025 ShoeShop. All rights reserved.
+    </div>
+</div>
+</body>
+</html>

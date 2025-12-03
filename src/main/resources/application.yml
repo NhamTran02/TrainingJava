@@ -1,0 +1,66 @@
+spring:
+  application:
+    name: Shoe_shop
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: Nham3112@
+    url: jdbc:mysql://localhost:3306/Shoe_Ecommerce?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+        dialect: org.hibernate.dialect.MySQL8Dialect
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password: RedisShoe@2025
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 50MB
+      enabled: true
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: nhamtran2k2@gmail.com
+    password: auxh umvj ejak lawf
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+
+jwt:
+  accessKey: c2VjcmV0QGtleS5hcGlfaGFzX2JlZW5fZGVzaWduZWRfYnlfVGF5TFE=
+  refreshKey: P+IPQo0w49hNbFHj9ZxKsXGwfyJNcGGcqEa/dl8dtQo=
+  expiryHour: 1
+  expiryDay: 14
+
+app:
+  upload:
+    dir: uploads
+
+vnpay:
+  tmnCode: RTY4A0HS
+  secretKey: 4SPXI0VZVPDFRE4HQPY3T8R2S0ZLPPHG
+  paymentUrl: https://sandbox.vnpayment.vn/paymentv2/vpcpay.html?
+  returnUrl: https://8080/api/vnpay/vnpay-callback
+  query-url: https://sandbox.vnpayment.vn/merchant_webapi/api/transaction?
+  ipnUrl: https://sandbox.vnpayment.vn/vnpaygw-sit-testing/user/login
+  version: 2.1.0
+
+crm:
+  usernamevnpay: "ttn@hathitrannhien.edu.vn"
+  passwordvnpay: "Abc123456"
+
