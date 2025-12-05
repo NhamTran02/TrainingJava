@@ -78,6 +78,9 @@ public enum ErrorCode {
     CART_ITEM_NOT_FOUND(404,"Không tìm thấy sản phẩm trong giỏ hàng"),
     PURCHASE_ORDER_NOT_FOUND(404,"Không tìm thấy đơn đặt hàng"),
     PURCHASE_ORDER_ITEM_NOT_FOUND(404,"Không tìm thấy mặt hàng đơn đặt hàng"),
+    IMAGE_NOT_FOUND(404,"Không tìm thấy hình ảnh"),
+    STORAGE_EXCEPTION(500,"Lỗi lưu trữ file"),
+    CANNOT_DELETE_ADMIN(400,"Không thể xoá user có role là admin")
     ;
 
     private final int code;

@@ -149,10 +149,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             token.setBlacklisted(true);
             tokenService.save(token);
         });
-        tokenService.findByAccessToken(tokenValue).ifPresent(token -> {
-            token.setBlacklisted(true);
-            tokenService.save(token);
-        });
     }
 
     @Override

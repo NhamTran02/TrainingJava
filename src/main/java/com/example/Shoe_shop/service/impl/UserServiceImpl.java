@@ -13,6 +13,7 @@ import com.example.Shoe_shop.service.TokenService;
 import com.example.Shoe_shop.service.UserService;
 import com.example.Shoe_shop.utils.CheckRole;
 import com.example.Shoe_shop.utils.EntityValidatorUtil;
+import com.example.Shoe_shop.utils.enums.RoleName;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -21,6 +22,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+
+import static com.example.Shoe_shop.utils.enums.RoleName.ADMIN;
 
 @Service
 @RequiredArgsConstructor
@@ -78,6 +81,9 @@ public class UserServiceImpl implements UserService {
                         .toList();
                 user.setRoles(roles);
             }
+            if(userUpdateDTO.getDeleted()!=null){
+                user.setDeleted(userUpdateDTO.getDeleted());
+            }
         }
         return userMapper.toUserResponse(userRepository.save(user));
     }
@@ -87,6 +93,11 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void softDeleteUser(Long id) {
         User user= entityValidatorUtil.requireUser(id);
+        boolean isAdmin=user.getRoles().stream()
+                .anyMatch(role -> role.getRoleName().equals(ADMIN));
+        if(isAdmin){
+            throw new AppException(ErrorCode.CANNOT_DELETE_ADMIN);
+        }
         if (user.getDeleted()){
             throw new AppException(ErrorCode.USER_ALREADY_DELETED);
         }

@@ -28,4 +28,38 @@ public class ProductImageController {
                 .message("Images uploaded successfully")
                 .build();
     }
+
+    @GetMapping("/product/{productId}")
+    public ApiResponse<List<ProductImageResponse>> getImagesByProductId(@PathVariable Long productId) {
+        return ApiResponse.<List<ProductImageResponse>>builder()
+                .result(productImageService.getImagesByProductId(productId))
+                .message("Get images successfully")
+                .build();
+    }
+
+    @GetMapping("/{imageId}")
+    public ApiResponse<ProductImageResponse> getImageById(@PathVariable Long imageId) {
+        return ApiResponse.<ProductImageResponse>builder()
+                .result(productImageService.getImageById(imageId))
+                .message("Get image successfully")
+                .build();
+    }
+
+    @DeleteMapping("/{imageId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ApiResponse<Void> deleteImage(@PathVariable Long imageId) {
+        productImageService.deleteImage(imageId);
+        return ApiResponse.<Void>builder()
+                .message("Image deleted successfully")
+                .build();
+    }
+
+    @DeleteMapping("/batch")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ApiResponse<Void> deleteImages(@RequestBody List<Long> imageIds) {
+        productImageService.deleteImages(imageIds);
+        return ApiResponse.<Void>builder()
+                .message("Images deleted successfully")
+                .build();
+    }
 }

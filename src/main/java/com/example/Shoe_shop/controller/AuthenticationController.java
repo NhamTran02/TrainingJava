@@ -62,11 +62,10 @@ public class AuthenticationController {
     }
 
     @PostMapping("/logout")
-    public ApiResponse<Void> logout(HttpServletRequest request) {
-        String authHeader = request.getHeader("Authorization");
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            String token = authHeader.substring(7);
-            authService.logout(token);
+    public ApiResponse<Void> logout(@RequestBody Map<String, String> body) {
+        String refreshToken = body.get("refreshToken");
+        if (refreshToken != null && !refreshToken.isEmpty()) {
+            authService.logout(refreshToken);
         }
         return ApiResponse.<Void>builder()
                 .message("Logout successfully!")
