@@ -187,4 +187,13 @@ public class ProductController {
                 .message("Product deleted successfully")
                 .build();
     }
+
+    @PutMapping("restore/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ApiResponse<Void> restoreProduct(@PathVariable Long id) {
+        productService.restore(id);
+        return ApiResponse.<Void>builder()
+                .message("Product restored successfully")
+                .build();
+    }
 }

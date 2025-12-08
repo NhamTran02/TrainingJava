@@ -244,4 +244,11 @@ public class ProductServiceImpl implements ProductService {
         redisCacheService.deleteKey(RELATED_CACHE_PREFIX + id);
 
     }
+
+    @Override
+    public void restore(long id) {
+        Product product = entityValidatorUtil.requireProduct(id);
+        product.setDeleted(false);
+        productRepository.save(product);
+    }
 }

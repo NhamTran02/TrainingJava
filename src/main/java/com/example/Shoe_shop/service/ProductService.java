@@ -19,4 +19,5 @@ public interface ProductService {
     PagedResponse<ProductResponse> searchProducts(ProductSearchRequest request,int page, int size, String sortBy, String sortDir);
     ProductResponse updateProduct(Long id, ProductRequest request);
     void softDeleteProduct(Long id); // xoá mềm
+    void restore(long id);
 }

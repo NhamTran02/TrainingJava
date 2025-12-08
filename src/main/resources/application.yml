@@ -19,6 +19,10 @@ spring:
       host: localhost
       port: 6379
       password: RedisShoe@2025
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 50MB
 
   mail:
     host: smtp.gmail.com
