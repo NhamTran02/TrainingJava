@@ -27,7 +27,7 @@ export class OrdersComponent implements OnInit {
     { key: 'ALL', label: 'Tất cả' },
     { key: OrderStatus.PENDING, label: 'Chờ xác nhận' },
     { key: OrderStatus.PROCESSING, label: 'Đang xử lý' },
-    { key: OrderStatus.SHIPPING, label: 'Đang giao' },
+    { key: OrderStatus.ON_DELIVERY, label: 'Đang giao' },
     { key: OrderStatus.DELIVERED, label: 'Đã giao' },
     { key: OrderStatus.CANCELLED, label: 'Đã hủy' }
   ];
@@ -111,10 +111,9 @@ export class OrdersComponent implements OnInit {
     const statusMap: Record<OrderStatus, string> = {
       [OrderStatus.PENDING]: 'Chờ xác nhận',
       [OrderStatus.PROCESSING]: 'Đang xử lý',
-      [OrderStatus.SHIPPING]: 'Đang giao hàng',
+      [OrderStatus.ON_DELIVERY]: 'Đang giao hàng',
       [OrderStatus.DELIVERED]: 'Đã giao hàng',
-      [OrderStatus.CANCELLED]: 'Đã hủy',
-      [OrderStatus.RETURNED]: 'Đã trả hàng'
+      [OrderStatus.CANCELLED]: 'Đã hủy'
     };
     return statusMap[status] || status;
   }
@@ -123,10 +122,9 @@ export class OrdersComponent implements OnInit {
     const colorMap: Record<OrderStatus, string> = {
       [OrderStatus.PENDING]: 'bg-yellow-100 text-yellow-800',
       [OrderStatus.PROCESSING]: 'bg-purple-100 text-purple-800',
-      [OrderStatus.SHIPPING]: 'bg-indigo-100 text-indigo-800',
+      [OrderStatus.ON_DELIVERY]: 'bg-purple-100 text-purple-800',
       [OrderStatus.DELIVERED]: 'bg-green-100 text-green-800',
-      [OrderStatus.CANCELLED]: 'bg-red-100 text-red-800',
-      [OrderStatus.RETURNED]: 'bg-gray-100 text-gray-800'
+      [OrderStatus.CANCELLED]: 'bg-red-100 text-red-800'
     };
     return colorMap[status] || 'bg-gray-100 text-gray-800';
   }

@@ -99,4 +99,8 @@ export class HeaderComponent implements OnInit {
       this.onSearch();
     }
   }
+
+  isAdmin(): boolean {
+    return this.authService.isAdmin();
+  }
 }

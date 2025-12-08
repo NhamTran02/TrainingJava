@@ -27,6 +27,10 @@ export class ProductDetailComponent implements OnInit {
   Math = Math;
   wishlistProductIds: Set<number> = new Set();
   isCurrentProductInWishlist = false;
+  
+  // Carousel controls
+  thumbnailStartIndex = 0;
+  thumbnailsPerView = 5;
 
   constructor(
     private route: ActivatedRoute,
@@ -104,6 +108,35 @@ export class ProductDetailComponent implements OnInit {
 
   selectImage(imageUrl: string): void {
     this.selectedImage = imageUrl;
+  }
+
+  get visibleThumbnails() {
+    if (!this.product?.images) return [];
+    return this.product.images.slice(
+      this.thumbnailStartIndex,
+      this.thumbnailStartIndex + this.thumbnailsPerView
+    );
+  }
+
+  canScrollPrev(): boolean {
+    return this.thumbnailStartIndex > 0;
+  }
+
+  canScrollNext(): boolean {
+    if (!this.product?.images) return false;
+    return this.thumbnailStartIndex + this.thumbnailsPerView < this.product.images.length;
+  }
+
+  scrollThumbnailsPrev(): void {
+    if (this.canScrollPrev()) {
+      this.thumbnailStartIndex--;
+    }
+  }
+
+  scrollThumbnailsNext(): void {
+    if (this.canScrollNext()) {
+      this.thumbnailStartIndex++;
+    }
   }
 
   incrementQuantity(): void {

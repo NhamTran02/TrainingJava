@@ -1,0 +1,229 @@
+<div class="min-h-screen bg-gray-50 py-8">
+  <div class="max-w-4xl mx-auto px-4">
+    <!-- Header -->
+    <div class="mb-6">
+      <button (click)="cancel()" class="flex items-center text-gray-600 hover:text-orange-500 transition group mb-4">
+        <svg class="w-5 h-5 mr-2 group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+        </svg>
+        <span class="font-medium">Quay lại</span>
+      </button>
+      <h1 class="text-3xl font-bold text-gray-900">
+        {{ isEditMode ? 'Chỉnh sửa sản phẩm' : 'Tạo sản phẩm mới' }}
+      </h1>
+    </div>
+
+    <!-- Form Card -->
+    <div class="bg-white rounded-lg shadow-sm p-6">
+      <form (ngSubmit)="saveProduct()">
+        <!-- Product Name -->
+        <div class="mb-6">
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            Tên sản phẩm <span class="text-red-500">*</span>
+          </label>
+          <input type="text" 
+                 [(ngModel)]="productForm.name"
+                 name="name"
+                 required
+                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                 placeholder="Nhập tên sản phẩm">
+        </div>
+
+        <!-- Description -->
+        <div class="mb-6">
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            Mô tả
+          </label>
+          <textarea [(ngModel)]="productForm.description"
+                    name="description"
+                    rows="4"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent resize-none"
+                    placeholder="Nhập mô tả sản phẩm"></textarea>
+        </div>
+
+        <!-- Brand and Category -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              Thương hiệu <span class="text-red-500">*</span>
+            </label>
+            <select [(ngModel)]="productForm.brandId"
+                    name="brandId"
+                    required
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent">
+              <option [value]="null">Chọn thương hiệu</option>
+              <option *ngFor="let brand of brands" [value]="brand.id">
+                {{ brand.name }}
+              </option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              Danh mục <span class="text-red-500">*</span>
+            </label>
+            <select [(ngModel)]="productForm.categoryId"
+                    name="categoryId"
+                    required
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent">
+              <option [value]="null">Chọn danh mục</option>
+              <option *ngFor="let category of categories" [value]="category.id">
+                {{ category.name }}
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Product Images -->
+        <div class="mb-6">
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            Hình ảnh sản phẩm
+          </label>
+          
+          <!-- Upload Area -->
+          <div class="upload-area p-8 text-center cursor-pointer mb-4"
+               (click)="fileInput.click()">
+            <svg class="mx-auto h-12 w-12 text-gray-400 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+            </svg>
+            <p class="text-sm text-gray-600 mb-1">
+              <span class="font-semibold text-orange-500">Kéo thả</span> hoặc 
+              <span class="font-semibold text-orange-500">chọn file</span>
+            </p>
+            <p class="text-xs text-gray-500">PNG, JPG, GIF tối đa 10MB</p>
+            <input #fileInput
+                   type="file"
+                   multiple
+                   accept="image/*"
+                   (change)="onFileSelect($event)"
+                   class="hidden">
+          </div>
+
+          <!-- Existing Images (Edit Mode) -->
+          <div *ngIf="isEditMode && existingImages.length > 0" class="mb-4">
+            <h3 class="text-sm font-medium text-gray-700 mb-2">Ảnh hiện có</h3>
+            <div class="relative flex items-center gap-2">
+              <!-- Previous Button -->
+              <button *ngIf="canScrollExistingPrev()"
+                      type="button"
+                      (click)="scrollExistingPrev()"
+                      class="absolute left-0 z-10 bg-white rounded-full p-2 shadow-lg hover:bg-gray-100 transition">
+                <svg class="w-5 h-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+
+              <!-- Images Grid -->
+              <div class="flex-1 overflow-hidden">
+                <div class="grid grid-cols-4 gap-4">
+                  <div *ngFor="let image of visibleExistingImages" 
+                       class="image-preview"
+                       [class.thumbnail]="image.isThumbnail">
+                    <img [src]="image.url" [alt]="'Product image'">
+                    <button type="button"
+                            (click)="removeExistingImage(image.id)"
+                            class="remove-btn">
+                      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                    <div *ngIf="image.isThumbnail" class="thumbnail-badge">
+                      Thumbnail
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Next Button -->
+              <button *ngIf="canScrollExistingNext()"
+                      type="button"
+                      (click)="scrollExistingNext()"
+                      class="absolute right-0 z-10 bg-white rounded-full p-2 shadow-lg hover:bg-gray-100 transition">
+                <svg class="w-5 h-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- New Image Previews -->
+          <div *ngIf="imagePreviews.length > 0">
+            <h3 class="text-sm font-medium text-gray-700 mb-2">Ảnh mới</h3>
+            <div class="relative flex items-center gap-2">
+              <!-- Previous Button -->
+              <button *ngIf="canScrollNewPrev()"
+                      type="button"
+                      (click)="scrollNewPrev()"
+                      class="absolute left-0 z-10 bg-white rounded-full p-2 shadow-lg hover:bg-gray-100 transition">
+                <svg class="w-5 h-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+
+              <!-- Images Grid -->
+              <div class="flex-1 overflow-hidden">
+                <div class="grid grid-cols-4 gap-4">
+                  <div *ngFor="let preview of visibleNewImages; let i = index" 
+                       class="image-preview"
+                       [class.thumbnail]="(newImagesStartIndex + i) === thumbnailIndex">
+                    <img [src]="preview" [alt]="'Preview ' + (i + 1)">
+                    <button type="button"
+                            (click)="removeImage(newImagesStartIndex + i)"
+                            class="remove-btn">
+                      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                    <div *ngIf="(newImagesStartIndex + i) === thumbnailIndex" class="thumbnail-badge">
+                      Thumbnail mới
+                    </div>
+                    <div class="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 p-2 flex justify-center">
+                      <button type="button"
+                              (click)="setThumbnail(newImagesStartIndex + i)"
+                              class="text-white text-xs hover:text-orange-300 transition">
+                        {{ (newImagesStartIndex + i) === thumbnailIndex ? 'Bỏ thumbnail' : 'Đặt làm thumbnail' }}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Next Button -->
+              <button *ngIf="canScrollNewNext()"
+                      type="button"
+                      (click)="scrollNewNext()"
+                      class="absolute right-0 z-10 bg-white rounded-full p-2 shadow-lg hover:bg-gray-100 transition">
+                <svg class="w-5 h-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <p class="text-xs text-gray-500 mt-2">
+            * Click vào ảnh để đặt/bỏ thumbnail. Nếu không chọn, ảnh đầu tiên sẽ là thumbnail mặc định.
+          </p>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex justify-end space-x-3 pt-6 border-t">
+          <button type="button"
+                  (click)="cancel()"
+                  [disabled]="loading"
+                  class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition disabled:opacity-50">
+            Hủy
+          </button>
+          <button type="submit"
+                  [disabled]="loading"
+                  class="px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition disabled:opacity-50 flex items-center">
+            <svg *ngIf="loading" class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            {{ loading ? 'Đang xử lý...' : (isEditMode ? 'Cập nhật' : 'Tạo sản phẩm') }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

@@ -61,8 +61,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.stopSlideShow();
   }
-
-  // Slider methods
+  // Slider methodsf
   startSlideShow(): void {
     this.slideInterval = setInterval(() => {
       this.nextSlide();

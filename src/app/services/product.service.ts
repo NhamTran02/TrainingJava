@@ -72,4 +72,24 @@ export class ProductService {
     return this.http.get<ApiResponse<PagedResponse<Product>>>(`${this.apiUrl}/${categoryId}/category`, { params })
       .pipe(map(response => response.result));
   }
+
+  // Admin methods
+  createProduct(product: any): Observable<Product> {
+    return this.http.post<ApiResponse<Product>>(`${this.apiUrl}`, product)
+      .pipe(map(response => response.result));
+  }
+
+  updateProduct(id: number, product: any): Observable<Product> {
+    return this.http.put<ApiResponse<Product>>(`${this.apiUrl}/${id}`, product)
+      .pipe(map(response => response.result));
+  }
+
+  deleteProduct(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
+
+  restoreProduct(id: number): Observable<void> {
+    return this.http.put<ApiResponse<void>>(`${this.apiUrl}/restore/${id}`, {})
+      .pipe(map(() => undefined));
+  }
 }

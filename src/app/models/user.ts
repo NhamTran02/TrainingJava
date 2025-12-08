@@ -15,6 +15,7 @@ export interface UserUpdateRequest {
   phoneNumber: string;
   address: string;
   password?: string;
+  deleted?: boolean;
 }
 
 export interface ChangePasswordRequest {
@@ -27,6 +28,16 @@ export interface ChangePasswordRequest {
 export interface UserResponse {
   code: number;
   result: User;
+}
+
+export interface UsersListResponse {
+  code?: number;
+  result?: User[];
+}
+
+export interface DeleteUserResponse {
+  code: number;
+  message: string;
 }
 
 // Auth interfaces

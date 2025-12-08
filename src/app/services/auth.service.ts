@@ -49,10 +49,14 @@ export class AuthService {
     return this.http.post<LoginResponse>(`${this.apiUrl}/login`, credentials).pipe(
       tap(response => {
         if (response.code === 200 && response.result) {
+          // Parse JWT token to extract roles
+          const roles = this.getRolesFromToken(response.result.accessToken);
+          
           const user: User = {
             id: response.result.userId,
             username: credentials.username,
             email: '',
+            roleNames: roles
           };
           
           localStorage.setItem('currentUser', JSON.stringify(user));
@@ -68,6 +72,22 @@ export class AuthService {
         return throwError(() => error);
       })
     );
+  }
+
+  private getRolesFromToken(token: string): string[] {
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      // JWT payload chứa roles array
+      return payload.roles || [];
+    } catch (error) {
+      console.error('Error parsing token for roles:', error);
+      return [];
+    }
+  }
+
+  isAdmin(): boolean {
+    const user = this.getCurrentUser();
+    return user?.roleNames?.includes('ADMIN') || false;
   }
 
   register(data: RegisterRequest): Observable<RegisterResponse> {

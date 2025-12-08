@@ -44,7 +44,7 @@ export class LoginComponent implements OnInit {
       next: (response) => {
         if (response.code === 200) {
           console.log('Login successful:', response.message);
-          // Redirect về trang trước đó hoặc trang chủ
+          // Redirect về trang trước đó hoặc trang chủ (không phân biệt admin/user)
           this.router.navigateByUrl(this.returnUrl);
         } else {
           this.errorMessage = response.message || 'Đăng nhập thất bại';

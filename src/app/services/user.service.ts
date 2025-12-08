@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
-import { User, UserUpdateRequest, ChangePasswordRequest, UserResponse } from '../models/user';
+import { User, UserUpdateRequest, ChangePasswordRequest, UserResponse, UsersListResponse, DeleteUserResponse } from '../models/user';
 
 @Injectable({
   providedIn: 'root'
@@ -23,5 +23,14 @@ export class UserService {
 
   changePassword(request: ChangePasswordRequest): Observable<any> {
     return this.http.post(`${this.apiUrl}/change-password`, request);
+  }
+
+  // Admin methods
+  getAllUsers(): Observable<User[]> {
+    return this.http.get<User[]>(`${this.apiUrl}`);
+  }
+
+  deleteUser(id: number): Observable<DeleteUserResponse> {
+    return this.http.delete<DeleteUserResponse>(`${this.apiUrl}/${id}`);
   }
 }

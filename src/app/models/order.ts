@@ -13,10 +13,9 @@ export enum ShippingType {
 export enum OrderStatus {
   PENDING = 'PENDING',
   PROCESSING = 'PROCESSING',
-  SHIPPING = 'SHIPPING',
+  ON_DELIVERY = 'ON_DELIVERY',
   DELIVERED = 'DELIVERED',
-  CANCELLED = 'CANCELLED',
-  RETURNED = 'RETURNED'
+  CANCELLED = 'CANCELLED'
 }
 
 export interface OrderRequest {

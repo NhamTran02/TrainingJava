@@ -82,7 +82,37 @@ export const routes: Routes = [
       import('./pages/search/search.component').then((m) => m.SearchComponent),
   },
   {
+    path: 'dashboard',
+    loadComponent: () =>
+      import('./pages/dashboard/dashboard.component').then((m) => m.DashboardComponent),
+  },
+  {
+    path: 'admin/users',
+    loadComponent: () =>
+      import('./pages/admin/user-management/user-management.component').then((m) => m.UserManagementComponent),
+  },
+  {
+    path: 'admin/orders',
+    loadComponent: () =>
+      import('./pages/admin/order-management/order-management.component').then((m) => m.OrderManagementComponent),
+  },
+  {
+    path: 'admin/products',
+    loadComponent: () =>
+      import('./pages/admin/product-management/product-management.component').then((m) => m.ProductManagementComponent),
+  },
+  {
+    path: 'admin/products/new',
+    loadComponent: () =>
+      import('./pages/admin/product-form/product-form.component').then((m) => m.ProductFormComponent),
+  },
+  {
+    path: 'admin/products/edit/:id',
+    loadComponent: () =>
+      import('./pages/admin/product-form/product-form.component').then((m) => m.ProductFormComponent),
+  },
+  {
     path: '**',
     redirectTo: '',
-  },
+  }
 ];

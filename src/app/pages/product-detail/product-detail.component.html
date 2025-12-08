@@ -59,15 +59,38 @@
             </div>
           </div>
           
-          <!-- Thumbnail Images -->
-          <div *ngIf="product.images && product.images.length > 1" class="grid grid-cols-4 gap-2">
-            <div *ngFor="let image of product.images" 
-                 (click)="selectImage(image.url)"
-                 class="aspect-square bg-gray-100 rounded-lg overflow-hidden cursor-pointer border-2 transition-all"
-                 [class.border-orange-500]="selectedImage === image.url"
-                 [class.border-gray-200]="selectedImage !== image.url">
-              <img [src]="image.url" [alt]="product.name" class="w-full h-full object-cover">
+          <!-- Thumbnail Images Carousel -->
+          <div *ngIf="product.images && product.images.length > 1" class="relative flex items-center gap-2">
+            <!-- Previous Button -->
+            <button *ngIf="canScrollPrev()"
+                    (click)="scrollThumbnailsPrev()"
+                    class="absolute left-0 z-10 bg-white rounded-full p-2 shadow-lg hover:bg-gray-100 transition">
+              <svg class="w-5 h-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+
+            <!-- Thumbnails -->
+            <div class="flex-1 overflow-hidden">
+              <div class="grid grid-cols-5 gap-2">
+                <div *ngFor="let image of visibleThumbnails" 
+                     (click)="selectImage(image.url)"
+                     class="aspect-square bg-gray-100 rounded-lg overflow-hidden cursor-pointer border-2 transition-all hover:border-orange-300"
+                     [class.border-orange-500]="selectedImage === image.url"
+                     [class.border-gray-200]="selectedImage !== image.url">
+                  <img [src]="image.url" [alt]="product.name" class="w-full h-full object-cover">
+                </div>
+              </div>
             </div>
+
+            <!-- Next Button -->
+            <button *ngIf="canScrollNext()"
+                    (click)="scrollThumbnailsNext()"
+                    class="absolute right-0 z-10 bg-white rounded-full p-2 shadow-lg hover:bg-gray-100 transition">
+              <svg class="w-5 h-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
           </div>
         </div>
 
